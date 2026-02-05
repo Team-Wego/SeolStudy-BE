@@ -53,4 +53,16 @@ public class MentorTaskController {
 
         return ResponseEntity.ok(response);
     }
+
+    @Operation(
+            summary = "과제 삭제",
+            description = "멘토가 담당 멘티의 과제를 삭제합니다."
+    )
+    @DeleteMapping("/tasks/{taskId}")
+    public ResponseEntity<Void> deleteTask(
+            @PathVariable("taskId") int taskId
+    ) {
+        mentorTaskService.deleteTask(TEMP_MENTOR_ID, taskId);
+        return ResponseEntity.noContent().build();
+    }
 }

@@ -9,4 +9,6 @@ public interface MentorTaskService {
     CreateTaskResponse createTask(int mentorId, int menteeId, CreateTaskRequest request);
 
     TaskResponse updateTask(int mentorId, int taskId, UpdateTaskRequest request);
+
+    void deleteTask(int mentorId, int taskId);
 }

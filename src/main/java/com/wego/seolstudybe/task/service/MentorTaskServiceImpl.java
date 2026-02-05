@@ -106,6 +106,18 @@ public class MentorTaskServiceImpl implements MentorTaskService{
 
     }
 
+    @Override
+    public void deleteTask(int mentorId, int taskId) {
+
+        Task task = taskRepository.findById(taskId)
+                .orElseThrow(TaskNotFoundException::new);
+
+        Member mentee = getVerifiedMentee(mentorId, task.getMentee().getId());
+
+        taskWorksheetRepository.deleteByTask(task);
+        taskRepository.delete(task);
+    }
+
 
     /**
      * 멘토가 해당 멘티의 담당자인지 검증
