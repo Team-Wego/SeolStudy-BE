@@ -16,7 +16,8 @@ public class ChatRoomResponse {
     private String lastMessage;
     private Long lastSenderId;
     private LocalDateTime lastMessageAt;
-    private int unreadCount;
+    private int mentorUnreadCount;
+    private int menteeUnreadCount;
     private LocalDateTime createdAt;
 
     public static ChatRoomResponse from(ChatRoom chatRoom) {
@@ -27,23 +28,8 @@ public class ChatRoomResponse {
                 .lastMessage(chatRoom.getLastMessage())
                 .lastSenderId(chatRoom.getLastSenderId())
                 .lastMessageAt(chatRoom.getLastMessageAt())
-                .createdAt(chatRoom.getCreatedAt())
-                .build();
-    }
-
-    public static ChatRoomResponse from(ChatRoom chatRoom, Long currentUserId) {
-        int unread = currentUserId.equals(chatRoom.getMentorId())
-                ? chatRoom.getMentorUnreadCount()
-                : chatRoom.getMenteeUnreadCount();
-
-        return ChatRoomResponse.builder()
-                .roomId(chatRoom.getId())
-                .mentorId(chatRoom.getMentorId())
-                .menteeId(chatRoom.getMenteeId())
-                .lastMessage(chatRoom.getLastMessage())
-                .lastSenderId(chatRoom.getLastSenderId())
-                .lastMessageAt(chatRoom.getLastMessageAt())
-                .unreadCount(unread)
+                .mentorUnreadCount(chatRoom.getMentorUnreadCount())
+                .menteeUnreadCount(chatRoom.getMenteeUnreadCount())
                 .createdAt(chatRoom.getCreatedAt())
                 .build();
     }

@@ -38,3 +38,8 @@ out/
 
 ### ETC ###
 src/main/resources/application.yml
+src/main/resources/application-*.yml
+
+### Firebase ###
+*-firebase-adminsdk-*.json
+firebase-*.json
