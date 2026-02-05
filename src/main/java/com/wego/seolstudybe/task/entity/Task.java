@@ -71,4 +71,18 @@ public class Task {
     @Column(name = "created_at", nullable = false, updatable = false)
     private LocalDateTime createdAt;
 
+    public void updateContent(String title, Subject subject) {
+        this.title = title;
+        this.subject = subject;
+    }
+
+    public void updateSequence(Integer sequence) {
+        this.sequence = sequence;
+    }
+
+    public void changeStatus(boolean isChecked) {
+        this.isChecked = isChecked;
+        this.checkedAt = isChecked ? LocalDateTime.now() : null;
+    }
+
 }

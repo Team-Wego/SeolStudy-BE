@@ -1,0 +1,85 @@
+package com.wego.seolstudybe.task.service;
+
+import com.wego.seolstudybe.member.entity.Member;
+import com.wego.seolstudybe.member.exception.MemberNotFoundException;
+import com.wego.seolstudybe.member.repository.MemberRepository;
+import com.wego.seolstudybe.task.dto.request.TaskCreateRequest;
+import com.wego.seolstudybe.task.dto.request.TaskSequenceUpdateRequest;
+import com.wego.seolstudybe.task.dto.request.TaskStatusUpdateRequest;
+import com.wego.seolstudybe.task.dto.request.TaskUpdateRequest;
+import com.wego.seolstudybe.task.dto.response.TaskResponse;
+import com.wego.seolstudybe.task.entity.Task;
+import com.wego.seolstudybe.task.entity.enums.TaskType;
+import com.wego.seolstudybe.task.exception.TaskNotFoundException;
+import com.wego.seolstudybe.task.repository.TaskRepository;
+import lombok.RequiredArgsConstructor;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
+import java.time.LocalDateTime;
+
+@Service
+@RequiredArgsConstructor
+@Transactional(readOnly = true)
+public class MenteeTaskServiceImpl implements MenteeTaskService {
+
+    private final TaskRepository taskRepository;
+    private final MemberRepository memberRepository;
+
+    @Override
+    @Transactional
+    public TaskResponse createTask(int memberId, TaskCreateRequest request) {
+        Member mentee = memberRepository.findById(memberId)
+                .orElseThrow(MemberNotFoundException::new);
+
+        int nextSequence = taskRepository.findMaxSequenceByMenteeIdAndDate(memberId, request.date()) + 1;
+
+        Task task = Task.builder()
+                .mentee(mentee)
+                .title(request.title())
+                .type(TaskType.TODO)
+                .date(request.date())
+                .subject(request.subject())
+                .sequence(nextSequence)
+                .createdAt(LocalDateTime.now())
+                .build();
+
+        Task savedTask = taskRepository.save(task);
+        return TaskResponse.from(savedTask);
+    }
+
+    @Override
+    @Transactional
+    public TaskResponse updateTask(int memberId, int taskId, TaskUpdateRequest request) {
+        Task task = findTaskByIdAndMemberId(taskId, memberId);
+        task.updateContent(request.title(), request.subject());
+        return TaskResponse.from(task);
+    }
+
+    @Override
+    @Transactional
+    public void updateTaskSequence(int memberId, int taskId, TaskSequenceUpdateRequest request) {
+        Task task = findTaskByIdAndMemberId(taskId, memberId);
+        task.updateSequence(request.sequence());
+    }
+
+    @Override
+    @Transactional
+    public void deleteTask(int memberId, int taskId) {
+        Task task = findTaskByIdAndMemberId(taskId, memberId);
+        taskRepository.delete(task);
+    }
+
+    @Override
+    @Transactional
+    public TaskResponse updateTaskStatus(int memberId, int taskId, TaskStatusUpdateRequest request) {
+        Task task = findTaskByIdAndMemberId(taskId, memberId);
+        task.changeStatus(request.isChecked());
+        return TaskResponse.from(task);
+    }
+
+    private Task findTaskByIdAndMemberId(int taskId, int memberId) {
+        return taskRepository.findByIdAndMenteeId(taskId, memberId)
+                .orElseThrow(TaskNotFoundException::new);
+    }
+}
