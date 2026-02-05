@@ -73,4 +73,20 @@ public class Task {
     @Column(name = "created_at", nullable = false, updatable = false)
     private LocalDateTime createdAt;
 
+    public void update(
+            String title,
+            String description,
+            TaskType type,
+            LocalDate date,
+            Subject subject,
+            Goal goal
+    ) {
+        this.title = title;
+        this.description = description;
+        this.type = type;
+        this.date = date;
+        this.subject = subject;
+        this.goal = goal;
+    }
+
 }

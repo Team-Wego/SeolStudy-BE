@@ -1,7 +1,9 @@
 package com.wego.seolstudybe.task.controller;
 
 import com.wego.seolstudybe.task.dto.CreateTaskRequest;
+import com.wego.seolstudybe.task.dto.CreateTaskResponse;
 import com.wego.seolstudybe.task.dto.TaskResponse;
+import com.wego.seolstudybe.task.dto.UpdateTaskRequest;
 import com.wego.seolstudybe.task.service.MentorTaskService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -20,20 +22,35 @@ public class MentorTaskController {
     private final MentorTaskService mentorTaskService;
 
     @Operation(
-            summary = "과제 생성",
-            description = "멘토가 담당 멘티에게 과제를 생성합니다."
+            summary = "과제 등록",
+            description = "멘토가 담당 멘티에게 과제를 등록합니다."
     )
     @PostMapping("/mentees/{menteeId}/tasks")
-    public ResponseEntity<TaskResponse> createTask(
+    public ResponseEntity<CreateTaskResponse> createTask(
             @PathVariable("menteeId") int menteeId,
             @RequestBody @Valid CreateTaskRequest request
     ) {
-        TaskResponse response =
+        CreateTaskResponse response =
                 mentorTaskService.createTask(
                         TEMP_MENTOR_ID, // TODO: 로그인한 사용자 ID로 변경
                         menteeId,
                         request
                 );
         return ResponseEntity.status(HttpStatus.CREATED).body(response);
+    }
+
+    @Operation(
+            summary = "과제 수정",
+            description = "멘토가 담당 멘티의 과제를 수정합니다."
+    )
+    @PutMapping("/tasks/{taskId}")
+    public ResponseEntity<TaskResponse> updateTask(
+            @PathVariable("taskId") int taskId,
+            @RequestBody @Valid UpdateTaskRequest request
+    ) {
+        TaskResponse response =
+                mentorTaskService.updateTask(TEMP_MENTOR_ID, taskId, request);
+
+        return ResponseEntity.ok(response);
     }
 }

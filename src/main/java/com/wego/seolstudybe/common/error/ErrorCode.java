@@ -20,7 +20,11 @@ public enum ErrorCode {
 
     /* WORKSHEET */
     WORKSHEET_NOT_FOUND(HttpStatus.NOT_FOUND, "WORKSHEET001", "학습지가 존재하지 않습니다."),
-    WORKSHEET_NOT_OWNED(HttpStatus.FORBIDDEN, "WORKSHEET002", "멘티 소유의 학습지가 아닙니다.");
+    WORKSHEET_NOT_OWNED(HttpStatus.FORBIDDEN, "WORKSHEET002", "멘티 소유의 학습지가 아닙니다."),
+
+    /* TASK */
+    TASK_NOT_FOUND(HttpStatus.NOT_FOUND, "TASK001", "과제가 존재하지 않습니다.");
+
 
     private final HttpStatus status;
     private final String code;
