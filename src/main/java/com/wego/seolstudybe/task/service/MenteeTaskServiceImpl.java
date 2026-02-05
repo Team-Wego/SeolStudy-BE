@@ -32,14 +32,14 @@ public class MenteeTaskServiceImpl implements MenteeTaskService {
         Member mentee = memberRepository.findById(memberId)
                 .orElseThrow(MemberNotFoundException::new);
 
-        int nextSequence = taskRepository.findMaxSequenceByMenteeIdAndDate(memberId, request.date()) + 1;
+        int nextSequence = taskRepository.findMaxSequenceByMenteeIdAndDate(memberId, request.getDate()) + 1;
 
         Task task = Task.builder()
                 .mentee(mentee)
-                .title(request.title())
+                .title(request.getTitle())
                 .type(TaskType.TODO)
-                .date(request.date())
-                .subject(request.subject())
+                .date(request.getDate())
+                .subject(request.getSubject())
                 .sequence(nextSequence)
                 .createdAt(LocalDateTime.now())
                 .build();
@@ -52,7 +52,7 @@ public class MenteeTaskServiceImpl implements MenteeTaskService {
     @Transactional
     public TaskResponse updateTask(int memberId, int taskId, TaskUpdateRequest request) {
         Task task = findTaskByIdAndMemberId(taskId, memberId);
-        task.updateContent(request.title(), request.subject());
+        task.updateContent(request.getTitle(), request.getSubject());
         return TaskResponse.from(task);
     }
 
@@ -60,7 +60,7 @@ public class MenteeTaskServiceImpl implements MenteeTaskService {
     @Transactional
     public void updateTaskSequence(int memberId, int taskId, TaskSequenceUpdateRequest request) {
         Task task = findTaskByIdAndMemberId(taskId, memberId);
-        task.updateSequence(request.sequence());
+        task.updateSequence(request.getSequence());
     }
 
     @Override
@@ -74,7 +74,7 @@ public class MenteeTaskServiceImpl implements MenteeTaskService {
     @Transactional
     public TaskResponse updateTaskStatus(int memberId, int taskId, TaskStatusUpdateRequest request) {
         Task task = findTaskByIdAndMemberId(taskId, memberId);
-        task.changeStatus(request.isChecked());
+        task.changeStatus(request.getIsChecked());
         return TaskResponse.from(task);
     }
 
