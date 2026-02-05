@@ -37,4 +37,13 @@ public class WorksheetFile {
     @Column(nullable = false)
     private Subject subject;
 
+    public WorksheetFile(final Member mentee, final String name, final String url, final Float size, final String type,
+                         final Subject subject) {
+        this.mentee = mentee;
+        this.name = name;
+        this.url = url;
+        this.size = size;
+        this.type = type;
+        this.subject = subject;
+    }
 }
