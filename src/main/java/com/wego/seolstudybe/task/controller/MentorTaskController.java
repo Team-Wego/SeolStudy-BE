@@ -31,7 +31,7 @@ public class MentorTaskController {
     )
     @PostMapping("/mentees/{menteeId}/tasks")
     public ResponseEntity<CreateTaskResponse> createTask(
-            @CookieValue("memberId") int memberId,
+            @CookieValue(value = "memberId", defaultValue = "1") int memberId,
             @PathVariable("menteeId") int menteeId,
             @RequestBody @Valid CreateTaskRequest request
     ) {
@@ -45,7 +45,7 @@ public class MentorTaskController {
     )
     @PutMapping("/tasks/{taskId}")
     public ResponseEntity<UpdateTaskResponse> updateTask(
-            @CookieValue("memberId") int memberId,
+            @CookieValue(value = "memberId", defaultValue = "1") int memberId,
             @PathVariable("taskId") int taskId,
             @RequestBody @Valid UpdateTaskRequest request
     ) {
@@ -59,7 +59,7 @@ public class MentorTaskController {
     )
     @DeleteMapping("/tasks/{taskId}")
     public ResponseEntity<Void> deleteTask(
-            @CookieValue("memberId") int memberId,
+            @CookieValue(value = "memberId", defaultValue = "1") int memberId,
             @PathVariable("taskId") int taskId
     ) {
         mentorTaskService.deleteTask(memberId, taskId);
@@ -72,7 +72,7 @@ public class MentorTaskController {
     )
     @GetMapping("/mentees/submission-summary")
     public ResponseEntity<List<MenteeSubmissionSummaryResponse>> getSubmissionSummary(
-            @CookieValue("memberId") int memberId
+            @CookieValue(value = "memberId", defaultValue = "1") int memberId
     ) {
         List<MenteeSubmissionSummaryResponse> response = mentorTaskService.getSubmissionSummary(memberId);
         return ResponseEntity.ok(response);
@@ -84,7 +84,7 @@ public class MentorTaskController {
     )
     @GetMapping("/submissions/pending-feedback")
     public ResponseEntity<List<PendingFeedbackResponse>> getPendingFeedbacks(
-            @CookieValue("memberId") int memberId
+            @CookieValue(value = "memberId", defaultValue = "1") int memberId
     ) {
         List<PendingFeedbackResponse> response = mentorTaskService.getPendingFeedbacks(memberId);
         return ResponseEntity.ok(response);
