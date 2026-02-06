@@ -25,4 +25,9 @@ public class StudyTime {
 
     @Column(name = "ended_at", nullable = false)
     private LocalDateTime endedAt;
+
+    public void update(LocalDateTime startedAt, LocalDateTime endedAt) {
+        this.startedAt = startedAt;
+        this.endedAt = endedAt;
+    }
 }
