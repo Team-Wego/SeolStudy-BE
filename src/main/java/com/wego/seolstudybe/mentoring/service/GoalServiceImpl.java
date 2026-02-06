@@ -36,10 +36,6 @@ public class GoalServiceImpl implements GoalService {
 
         final Member targetMentee = findTargetMentee(creator, request.getMenteeId());
 
-        // TODO 주석 제거
-        // 멘토가 작성한 (혹은 멘티가 작성한) 목표 내에서 목표명 중복 체크
-        validateGoalNameDuplicated(request.getName(), creator, targetMentee);
-
         final WorksheetFile worksheetFile = saveWorksheetFile(file, request.getSubject(), creator);
 
         final Goal goal = new Goal(worksheetFile, request.getName(), request.getSubject(), creator, targetMentee);
@@ -113,12 +109,6 @@ public class GoalServiceImpl implements GoalService {
         }
 
         return findByMemberId(menteeId);
-    }
-
-    private void validateGoalNameDuplicated(final String name, final Member creator, final Member targetMentee) {
-        if (goalRepository.existsByNameAndCreatorAndTargetMentee(name, creator, targetMentee)) {
-            throw new GoalNameDuplicatedException();
-        }
     }
 
     private WorksheetFile saveWorksheetFile(final MultipartFile file, final Subject subject, final Member member) {
