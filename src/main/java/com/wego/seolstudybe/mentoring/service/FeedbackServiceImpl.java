@@ -6,11 +6,14 @@ import com.wego.seolstudybe.member.entity.enums.Role;
 import com.wego.seolstudybe.member.exception.MemberNotFoundException;
 import com.wego.seolstudybe.member.repository.MemberRepository;
 import com.wego.seolstudybe.mentoring.dto.CreateFeedbackRequest;
+import com.wego.seolstudybe.mentoring.dto.DailyFeedbackCountResponse;
 import com.wego.seolstudybe.mentoring.dto.FeedbackImageResponse;
+import com.wego.seolstudybe.mentoring.dto.FeedbackListResponse;
 import com.wego.seolstudybe.mentoring.dto.FeedbackResponse;
 import com.wego.seolstudybe.mentoring.entity.Feedback;
 import com.wego.seolstudybe.mentoring.entity.FeedbackImage;
 import com.wego.seolstudybe.mentoring.entity.enums.FeedbackType;
+import com.wego.seolstudybe.mentoring.exception.FeedbackAccessDeniedException;
 import com.wego.seolstudybe.mentoring.exception.FeedbackNotFoundException;
 import com.wego.seolstudybe.mentoring.exception.TaskIdRequiredException;
 import com.wego.seolstudybe.mentoring.repository.FeedbackImageRepository;
@@ -23,6 +26,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
@@ -87,6 +91,39 @@ public class FeedbackServiceImpl implements FeedbackService {
                 .collect(Collectors.toList());
 
         return FeedbackResponse.of(feedback, feedbackImages);
+    }
+
+    @Transactional(readOnly = true)
+    @Override
+    public List<FeedbackListResponse> getFeedbackList(final int memberId, final int menteeId, final FeedbackType type) {
+        final Member member = findMemberById(memberId);
+
+        validateMenteeAccess(member, menteeId);
+
+        final List<Feedback> feedbacks = (type != null)
+                ? feedbackRepository.findByMenteeIdAndTypeOrderByCreatedAtDesc(menteeId, type)
+                : feedbackRepository.findByMenteeIdOrderByCreatedAtDesc(menteeId);
+
+        return feedbacks.stream()
+                .map(FeedbackListResponse::of)
+                .collect(Collectors.toList());
+    }
+
+    @Transactional(readOnly = true)
+    @Override
+    public List<DailyFeedbackCountResponse> getDailyFeedbackCount(final int memberId, final int menteeId,
+                                                                   final LocalDate startDate, final LocalDate endDate) {
+        final Member member = findMemberById(memberId);
+
+        validateMenteeAccess(member, menteeId);
+
+        return feedbackRepository.countDailyByMenteeIdAndTargetDateBetween(menteeId, startDate, endDate);
+    }
+
+    private void validateMenteeAccess(final Member member, final int menteeId) {
+        if (member.getRole().equals(Role.MENTEE) && member.getId() != menteeId) {
+            throw new FeedbackAccessDeniedException();
+        }
     }
 
     private Task findTaskById(final Integer taskId) {
