@@ -5,6 +5,7 @@ build/
 !**/src/main/**/build/
 !**/src/test/**/build/
 .claude
+HANDOFF.md
 
 ### STS ###
 .apt_generated

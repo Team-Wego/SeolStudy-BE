@@ -11,6 +11,9 @@ public enum ErrorCode {
     INTERNAL_SERVER_ERROR(HttpStatus.INTERNAL_SERVER_ERROR, "COMMON002", "서버 내부 오류가 발생했습니다."),
     BAD_REQUEST(HttpStatus.BAD_REQUEST, "COMMON003", "잘못된 요청입니다."),
 
+    /* MEMBER */
+    MEMBER_NOT_FOUND(HttpStatus.NOT_FOUND, "MEMBER001", "회원을 찾을 수 없습니다."),
+
     /* CHAT */
     CHAT_ROOM_NOT_FOUND(HttpStatus.NOT_FOUND, "CHAT001", "채팅방을 찾을 수 없습니다."),
     CHAT_MESSAGE_NOT_FOUND(HttpStatus.NOT_FOUND, "CHAT002", "메시지를 찾을 수 없습니다."),
@@ -26,7 +29,19 @@ public enum ErrorCode {
 
     /* NOTIFICATION */
     FCM_TOKEN_NOT_FOUND(HttpStatus.NOT_FOUND, "NOTI001", "FCM 토큰을 찾을 수 없습니다."),
-    PUSH_NOTIFICATION_FAILED(HttpStatus.INTERNAL_SERVER_ERROR, "NOTI002", "푸시 알림 전송에 실패했습니다.");
+    PUSH_NOTIFICATION_FAILED(HttpStatus.INTERNAL_SERVER_ERROR, "NOTI002", "푸시 알림 전송에 실패했습니다."),
+
+    /* GOAL */
+    GOAL_NOT_FOUND(HttpStatus.NOT_FOUND, "GOAL001", "목표 데이터를 찾을 수 없습니다."),
+    GOAL_ACCESS_DENIED(HttpStatus.FORBIDDEN, "GOAL002", "목표 데이터를 수정/삭제 권한이 없습니다."),
+
+    /* TASK */
+    TASK_NOT_FOUND(HttpStatus.NOT_FOUND, "TASK001", "과제가 존재하지 않습니다."),
+    NOT_ASSIGNED_MENTEE(HttpStatus.FORBIDDEN, "MEMBER002", "담당 멘티가 아닙니다."),
+
+    /* WORKSHEET */
+    WORKSHEET_NOT_FOUND(HttpStatus.NOT_FOUND, "WORKSHEET001", "학습지가 존재하지 않습니다."),
+    WORKSHEET_NOT_OWNED(HttpStatus.FORBIDDEN, "WORKSHEET002", "멘티 소유의 학습지가 아닙니다.");
 
     private final HttpStatus status;
     private final String code;
