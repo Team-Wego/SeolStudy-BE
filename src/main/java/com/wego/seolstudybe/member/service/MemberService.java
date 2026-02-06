@@ -8,6 +8,7 @@ import com.wego.seolstudybe.member.exception.MemberNotFoundException;
 import com.wego.seolstudybe.member.repository.MemberRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 @Service
 @RequiredArgsConstructor
@@ -15,6 +16,7 @@ public class MemberService {
 
     private final MemberRepository memberRepository;
 
+    @Transactional(readOnly = true)
     public LoginResponse login(LoginRequest request) {
         // 1. 이메일로 회원 조회
         Member member = memberRepository.findByEmail(request.getEmail())
