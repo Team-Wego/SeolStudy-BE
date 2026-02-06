@@ -1,7 +1,6 @@
 package com.wego.seolstudybe.mentoring.service;
 
 import com.wego.seolstudybe.member.entity.Member;
-import com.wego.seolstudybe.member.entity.enums.Role;
 import com.wego.seolstudybe.member.exception.MemberNotFoundException;
 import com.wego.seolstudybe.member.repository.MemberRepository;
 import com.wego.seolstudybe.mentoring.dto.CreateGoalRequest;
@@ -10,8 +9,6 @@ import com.wego.seolstudybe.mentoring.entity.Goal;
 import com.wego.seolstudybe.mentoring.entity.WorksheetFile;
 import com.wego.seolstudybe.mentoring.entity.enums.Subject;
 import com.wego.seolstudybe.mentoring.exception.GoalAccessDeniedException;
-import com.wego.seolstudybe.mentoring.exception.GoalMenteeIdRequiredException;
-import com.wego.seolstudybe.mentoring.exception.GoalNameDuplicatedException;
 import com.wego.seolstudybe.mentoring.exception.GoalNotFoundException;
 import com.wego.seolstudybe.mentoring.repository.GoalRepository;
 import com.wego.seolstudybe.mentoring.repository.WorksheetFileRepository;
@@ -34,7 +31,7 @@ public class GoalServiceImpl implements GoalService {
     public Goal createGoal(final int memberId, final CreateGoalRequest request, final MultipartFile file) {
         final Member creator = findByMemberId(memberId);
 
-        final Member targetMentee = findTargetMentee(creator, request.getMenteeId());
+        final Member targetMentee = findByMemberId(request.getMenteeId());
 
         final WorksheetFile worksheetFile = saveWorksheetFile(file, request.getSubject(), creator);
 
@@ -99,18 +96,6 @@ public class GoalServiceImpl implements GoalService {
         }
     }
 
-    private Member findTargetMentee(final Member creator, final Integer menteeId) {
-        if (Role.MENTEE.equals(creator.getRole())) {
-            return null;
-        }
-
-        if (menteeId == null) {
-            throw new GoalMenteeIdRequiredException();
-        }
-
-        return findByMemberId(menteeId);
-    }
-
     private WorksheetFile saveWorksheetFile(final MultipartFile file, final Subject subject, final Member member) {
         if (file == null || file.isEmpty()) {
             return null;
@@ -126,7 +111,7 @@ public class GoalServiceImpl implements GoalService {
     }
 
     private Goal findByGoalId(final int goalId) {
-        return goalRepository.findById(goalId).orElseThrow(GoalNotFoundException::new);
+        return goalRepository.findByIdAndDeletedAtIsNull(goalId).orElseThrow(GoalNotFoundException::new);
     }
 
     private Member findByMemberId(final int memberId) {

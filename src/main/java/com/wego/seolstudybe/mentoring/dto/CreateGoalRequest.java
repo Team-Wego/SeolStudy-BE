@@ -2,6 +2,7 @@ package com.wego.seolstudybe.mentoring.dto;
 
 import com.wego.seolstudybe.mentoring.entity.enums.Subject;
 import io.swagger.v3.oas.annotations.media.Schema;
+import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import lombok.Getter;
@@ -21,5 +22,5 @@ public class CreateGoalRequest {
     private Subject subject;
 
     @Schema(description = "목표 부여할 멘티 ID(PK)")
-    private Integer menteeId;
+    private int menteeId;
 }

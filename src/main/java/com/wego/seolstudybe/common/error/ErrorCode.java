@@ -16,9 +16,7 @@ public enum ErrorCode {
 
     /* GOAL */
     GOAL_NOT_FOUND(HttpStatus.NOT_FOUND, "GOAL001", "목표 데이터를 찾을 수 없습니다."),
-    GOAL_ACCESS_DENIED(HttpStatus.FORBIDDEN, "GOAL002", "목표 데이터를 수정/삭제 권한이 없습니다."),
-    GOAL_NAME_DUPLICATED(HttpStatus.CONFLICT, "GOAL003", "이미 존재하는 목표 이름입니다."),
-    GOAL_MENTEE_ID_REQUIRED(HttpStatus.BAD_REQUEST, "GOAL004", "멘토가 목표를 등록할 때 멘티 ID는 필수입니다.");
+    GOAL_ACCESS_DENIED(HttpStatus.FORBIDDEN, "GOAL002", "목표 데이터를 수정/삭제 권한이 없습니다.");
 
     private final HttpStatus status;
     private final String code;
