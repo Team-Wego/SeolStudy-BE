@@ -4,7 +4,9 @@ build/
 !gradle/wrapper/gradle-wrapper.jar
 !**/src/main/**/build/
 !**/src/test/**/build/
+.claude
 HANDOFF.md
+
 ### STS ###
 .apt_generated
 .classpath
@@ -38,3 +40,8 @@ out/
 
 ### ETC ###
 src/main/resources/application.yml
+src/main/resources/application-*.yml
+
+### Firebase ###
+*-firebase-adminsdk-*.json
+firebase-*.json
