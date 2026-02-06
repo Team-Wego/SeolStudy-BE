@@ -12,6 +12,10 @@ public enum ErrorCode {
     BAD_REQUEST(HttpStatus.BAD_REQUEST, "COMMON003", "잘못된 요청입니다."),
 
     /* MEMBER */
+    MEMBER_NOT_FOUND(HttpStatus.NOT_FOUND, "MEMBER001", "회원을 찾을 수 없습니다."),
+
+    /* TASK */
+    TASK_NOT_FOUND(HttpStatus.NOT_FOUND, "TASK001", "할 일을 찾을 수 없습니다.");
     MEMBER_NOT_FOUND(HttpStatus.NOT_FOUND, "MEMBER001", "회원이 존재하지 않습니다."),
     NOT_ASSIGNED_MENTEE(HttpStatus.FORBIDDEN, "MEMBER002", "담당 멘티가 아닙니다."),
 
