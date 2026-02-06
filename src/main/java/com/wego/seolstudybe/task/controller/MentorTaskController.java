@@ -23,7 +23,6 @@ import java.util.List;
 @Tag(name = "Mentor Task", description = "멘토 과제 관리 API")
 public class MentorTaskController {
 
-    private static final int TEMP_MENTOR_ID = 1; // 임시 멘토 계정 (로그인 개발 전 사용)
     private final MentorTaskService mentorTaskService;
 
     @Operation(
@@ -32,15 +31,11 @@ public class MentorTaskController {
     )
     @PostMapping("/mentees/{menteeId}/tasks")
     public ResponseEntity<CreateTaskResponse> createTask(
+            @CookieValue("memberId") int memberId,
             @PathVariable("menteeId") int menteeId,
             @RequestBody @Valid CreateTaskRequest request
     ) {
-        CreateTaskResponse response =
-                mentorTaskService.createTask(
-                        TEMP_MENTOR_ID, // TODO: 로그인한 사용자 ID로 변경
-                        menteeId,
-                        request
-                );
+        CreateTaskResponse response = mentorTaskService.createTask(memberId, menteeId, request);
         return ResponseEntity.status(HttpStatus.CREATED).body(response);
     }
 
@@ -50,12 +45,11 @@ public class MentorTaskController {
     )
     @PutMapping("/tasks/{taskId}")
     public ResponseEntity<UpdateTaskResponse> updateTask(
+            @CookieValue("memberId") int memberId,
             @PathVariable("taskId") int taskId,
             @RequestBody @Valid UpdateTaskRequest request
     ) {
-        UpdateTaskResponse response =
-                mentorTaskService.updateTask(TEMP_MENTOR_ID, taskId, request);
-
+        UpdateTaskResponse response = mentorTaskService.updateTask(memberId, taskId, request);
         return ResponseEntity.ok(response);
     }
 
@@ -65,9 +59,10 @@ public class MentorTaskController {
     )
     @DeleteMapping("/tasks/{taskId}")
     public ResponseEntity<Void> deleteTask(
+            @CookieValue("memberId") int memberId,
             @PathVariable("taskId") int taskId
     ) {
-        mentorTaskService.deleteTask(TEMP_MENTOR_ID, taskId);
+        mentorTaskService.deleteTask(memberId, taskId);
         return ResponseEntity.noContent().build();
     }
 
@@ -76,9 +71,10 @@ public class MentorTaskController {
             description = "멘토가 담당하는 멘티들의 오늘 과제 제출 현황을 조회합니다."
     )
     @GetMapping("/mentees/submission-summary")
-    public ResponseEntity<List<MenteeSubmissionSummaryResponse>> getSubmissionSummary() {
-        List<MenteeSubmissionSummaryResponse> response =
-                mentorTaskService.getSubmissionSummary(TEMP_MENTOR_ID);
+    public ResponseEntity<List<MenteeSubmissionSummaryResponse>> getSubmissionSummary(
+            @CookieValue("memberId") int memberId
+    ) {
+        List<MenteeSubmissionSummaryResponse> response = mentorTaskService.getSubmissionSummary(memberId);
         return ResponseEntity.ok(response);
     }
 
@@ -87,9 +83,10 @@ public class MentorTaskController {
             description = "피드백이 작성되지 않은 제출된 과제 목록을 조회합니다. 최대 10건, 오래된 순으로 정렬됩니다."
     )
     @GetMapping("/submissions/pending-feedback")
-    public ResponseEntity<List<PendingFeedbackResponse>> getPendingFeedbacks() {
-        List<PendingFeedbackResponse> response =
-                mentorTaskService.getPendingFeedbacks(TEMP_MENTOR_ID);
+    public ResponseEntity<List<PendingFeedbackResponse>> getPendingFeedbacks(
+            @CookieValue("memberId") int memberId
+    ) {
+        List<PendingFeedbackResponse> response = mentorTaskService.getPendingFeedbacks(memberId);
         return ResponseEntity.ok(response);
     }
 }
