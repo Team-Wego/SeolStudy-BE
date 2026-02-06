@@ -10,7 +10,7 @@ import java.util.List;
 @Getter
 @Setter
 @NoArgsConstructor
-public class StudyTimeResponse {
+public class DailyStudyTimeResponse {
 
     private LocalDate date;
     private int totalMinutes;

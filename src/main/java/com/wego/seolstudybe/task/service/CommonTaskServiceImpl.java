@@ -54,10 +54,10 @@ public class CommonTaskServiceImpl implements CommonTaskService {
 
     @Override
     @Transactional(readOnly = true)
-    public StudyTimeResponse getStudyTime(int menteeId, LocalDate date) {
-        StudyTimeResponse response = taskMapper.findStudyTimeByMenteeIdAndDate(menteeId, date);
+    public DailyStudyTimeResponse getStudyTime(int menteeId, LocalDate date) {
+        DailyStudyTimeResponse response = taskMapper.findStudyTimeByMenteeIdAndDate(menteeId, date);
         if (response == null) {
-            response = new StudyTimeResponse();
+            response = new DailyStudyTimeResponse();
             response.setDate(date);
             response.setTotalMinutes(0);
             response.setStudyTimes(Collections.emptyList());

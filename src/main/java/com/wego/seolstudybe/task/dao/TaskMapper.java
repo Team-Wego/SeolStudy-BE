@@ -32,7 +32,7 @@ public interface TaskMapper {
             @Param("date") LocalDate date
     );
 
-    StudyTimeResponse findStudyTimeByMenteeIdAndDate(
+    DailyStudyTimeResponse findStudyTimeByMenteeIdAndDate(
             @Param("menteeId") int menteeId,
             @Param("date") LocalDate date
     );

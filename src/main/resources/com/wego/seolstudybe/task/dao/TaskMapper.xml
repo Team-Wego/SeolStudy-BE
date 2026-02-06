@@ -109,7 +109,7 @@
 
     <!-- 일일 공부 시간 조회 -->
     <select id="findStudyTimeByMenteeIdAndDate"
-            resultType="com.wego.seolstudybe.task.dto.response.StudyTimeResponse">
+            resultType="com.wego.seolstudybe.task.dto.response.DailyStudyTimeResponse">
         SELECT
             #{date} AS date,
             COALESCE(SUM(TIMESTAMPDIFF(MINUTE, B.started_at, B.ended_at)), 0) AS totalMinutes

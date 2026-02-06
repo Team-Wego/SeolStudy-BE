@@ -66,12 +66,12 @@ public class CommonTaskController {
 
     @GetMapping("/mentees/{menteeId}/planner/study-time")
     @Operation(summary = "공부 시간 조회", description = "특정 날짜의 총 공부 시간을 조회합니다.")
-    public ResponseEntity<StudyTimeResponse> getStudyTime(
+    public ResponseEntity<DailyStudyTimeResponse> getStudyTime(
             @PathVariable int menteeId,
             @Parameter(description = "조회 날짜 (yyyy-MM-dd)")
             @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate date
     ) {
-        StudyTimeResponse studyTime = commonTaskService.getStudyTime(menteeId, date);
+        DailyStudyTimeResponse studyTime = commonTaskService.getStudyTime(menteeId, date);
         return ResponseEntity.ok(studyTime);
     }
 }
