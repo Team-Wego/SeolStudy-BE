@@ -48,7 +48,7 @@ public class MentorTaskServiceImpl implements MentorTaskService{
         Goal goal = getGoalOrNull(request.getGoalId());
 
         int nextSequence = taskRepository
-                .findMaxSequenceByMenteeAndDate(menteeId, request.getDate()) + 1;
+                .findMaxSequenceByMenteeIdAndDate(mentee.getId(), request.getDate()) + 1;
 
         Task task = Task.builder()
                 .mentee(mentee)
