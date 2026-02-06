@@ -13,6 +13,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+@RequestMapping("/mentor")
 @RestController
 @RequiredArgsConstructor
 @Tag(name = "Mentor Task", description = "멘토 과제 관리 API")

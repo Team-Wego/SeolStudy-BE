@@ -85,6 +85,8 @@ public class Task {
     public void changeStatus(boolean isChecked) {
         this.isChecked = isChecked;
         this.checkedAt = isChecked ? LocalDateTime.now() : null;
+    }
+
     public void update(
             String title,
             String description,
