@@ -1,8 +1,8 @@
 package com.wego.seolstudybe.chat.controller;
 
-import com.wego.seolstudybe.chat.dto.ChatMessageRequest;
-import com.wego.seolstudybe.chat.dto.ChatMessageResponse;
-import com.wego.seolstudybe.chat.dto.ChatRoomResponse;
+import com.wego.seolstudybe.chat.dto.ChatMessageRequestDTO;
+import com.wego.seolstudybe.chat.dto.ChatMessageResponseDTO;
+import com.wego.seolstudybe.chat.dto.ChatRoomResponseDTO;
 import com.wego.seolstudybe.chat.service.ChatMessageService;
 import com.wego.seolstudybe.chat.service.ChatRoomService;
 import com.wego.seolstudybe.notification.service.PushNotificationService;
@@ -30,18 +30,18 @@ public class ChatMessageController {
      * 서버 -> /sub/user/{receiverId} 로 알림 전송
      */
     @MessageMapping("/chat/message")
-    public void sendMessage(@Payload ChatMessageRequest request) {
+    public void sendMessage(@Payload ChatMessageRequestDTO request) {
         log.info("메시지 수신: roomId={}, senderId={}, content={}",
                 request.getRoomId(), request.getSenderId(), request.getContent());
 
         // 메시지 저장
-        ChatMessageResponse response = chatMessageService.saveMessage(request);
+        ChatMessageResponseDTO response = chatMessageService.saveMessage(request);
 
         // 해당 채팅방 구독자들에게 메시지 전송
         messagingTemplate.convertAndSend("/sub/chat/room/" + request.getRoomId(), response);
 
         // 상대방에게 알림 전송 (채팅방 정보와 함께)
-        ChatRoomResponse roomInfo = chatRoomService.getChatRoom(request.getRoomId());
+        ChatRoomResponseDTO roomInfo = chatRoomService.getChatRoom(request.getRoomId());
         Long receiverId = request.getSenderId().equals(roomInfo.getMentorId())
                 ? roomInfo.getMenteeId()
                 : roomInfo.getMentorId();

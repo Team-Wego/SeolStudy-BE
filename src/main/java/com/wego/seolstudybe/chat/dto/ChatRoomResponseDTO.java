@@ -8,7 +8,7 @@ import java.time.LocalDateTime;
 
 @Getter
 @Builder
-public class ChatRoomResponse {
+public class ChatRoomResponseDTO {
 
     private String roomId;
     private Long mentorId;
@@ -20,8 +20,8 @@ public class ChatRoomResponse {
     private int menteeUnreadCount;
     private LocalDateTime createdAt;
 
-    public static ChatRoomResponse from(ChatRoom chatRoom) {
-        return ChatRoomResponse.builder()
+    public static ChatRoomResponseDTO from(ChatRoom chatRoom) {
+        return ChatRoomResponseDTO.builder()
                 .roomId(chatRoom.getId())
                 .mentorId(chatRoom.getMentorId())
                 .menteeId(chatRoom.getMenteeId())

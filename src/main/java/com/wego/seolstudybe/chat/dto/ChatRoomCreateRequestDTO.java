@@ -6,7 +6,7 @@ import lombok.NoArgsConstructor;
 
 @Getter
 @NoArgsConstructor
-public class ChatRoomCreateRequest {
+public class ChatRoomCreateRequestDTO {
 
     @NotNull(message = "멘토 ID는 필수입니다")
     private Long mentorId;

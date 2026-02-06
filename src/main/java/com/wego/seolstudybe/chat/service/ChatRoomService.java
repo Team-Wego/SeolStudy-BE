@@ -1,14 +1,19 @@
 package com.wego.seolstudybe.chat.service;
 
-import com.wego.seolstudybe.chat.dto.ChatRoomResponse;
+import com.wego.seolstudybe.chat.dto.ChatRoomResponseDTO;
 import com.wego.seolstudybe.chat.entity.ChatRoom;
 import com.wego.seolstudybe.chat.repository.ChatRoomRepository;
+import com.wego.seolstudybe.common.error.ErrorCode;
+import com.wego.seolstudybe.chat.exception.ChatRoomNotFoundException;
+import com.wego.seolstudybe.chat.exception.InvalidChatException;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.Optional;
 
+@Slf4j
 @Service
 @RequiredArgsConstructor
 public class ChatRoomService {
@@ -18,12 +23,18 @@ public class ChatRoomService {
     /**
      * 채팅방 생성 또는 기존 채팅방 반환
      */
-    public ChatRoomResponse createOrGetChatRoom(Long mentorId, Long menteeId) {
+    public ChatRoomResponseDTO createOrGetChatRoom(Long mentorId, Long menteeId) {
+        // 같은 사용자끼리 채팅방 생성 방지
+        if (mentorId.equals(menteeId)) {
+            throw new InvalidChatException(ErrorCode.SAME_USER_CHAT_NOT_ALLOWED);
+        }
+
         // 기존 채팅방이 있으면 반환
         Optional<ChatRoom> existingRoom = chatRoomRepository.findByMentorIdAndMenteeId(mentorId, menteeId);
 
         if (existingRoom.isPresent()) {
-            return ChatRoomResponse.from(existingRoom.get());
+            log.info("기존 채팅방 반환: roomId={}", existingRoom.get().getId());
+            return ChatRoomResponseDTO.from(existingRoom.get());
         }
 
         // 없으면 새로 생성
@@ -33,43 +44,44 @@ public class ChatRoomService {
                 .build();
 
         ChatRoom savedRoom = chatRoomRepository.save(newRoom);
-        return ChatRoomResponse.from(savedRoom);
+        log.info("새 채팅방 생성: roomId={}, mentorId={}, menteeId={}", savedRoom.getId(), mentorId, menteeId);
+        return ChatRoomResponseDTO.from(savedRoom);
     }
 
     /**
      * 채팅방 단건 조회
      */
-    public ChatRoomResponse getChatRoom(String roomId) {
+    public ChatRoomResponseDTO getChatRoom(String roomId) {
         ChatRoom chatRoom = chatRoomRepository.findById(roomId)
-                .orElseThrow(() -> new IllegalArgumentException("채팅방을 찾을 수 없습니다: " + roomId));
-        return ChatRoomResponse.from(chatRoom);
+                .orElseThrow(() -> new ChatRoomNotFoundException(roomId));
+        return ChatRoomResponseDTO.from(chatRoom);
     }
 
     /**
      * 멘토의 채팅방 목록 조회
      */
-    public List<ChatRoomResponse> getMentorChatRooms(Long mentorId) {
+    public List<ChatRoomResponseDTO> getMentorChatRooms(Long mentorId) {
         return chatRoomRepository.findByMentorIdOrderByLastMessageAtDesc(mentorId)
                 .stream()
-                .map(ChatRoomResponse::from)
+                .map(ChatRoomResponseDTO::from)
                 .toList();
     }
 
     /**
      * 멘티의 채팅방 목록 조회
      */
-    public List<ChatRoomResponse> getMenteeChatRooms(Long menteeId) {
+    public List<ChatRoomResponseDTO> getMenteeChatRooms(Long menteeId) {
         return chatRoomRepository.findByMenteeIdOrderByLastMessageAtDesc(menteeId)
                 .stream()
-                .map(ChatRoomResponse::from)
+                .map(ChatRoomResponseDTO::from)
                 .toList();
     }
 
     /**
      * 멘토-멘티 간 기존 채팅방 조회
      */
-    public Optional<ChatRoomResponse> findExistingChatRoom(Long mentorId, Long menteeId) {
+    public Optional<ChatRoomResponseDTO> findExistingChatRoom(Long mentorId, Long menteeId) {
         return chatRoomRepository.findByMentorIdAndMenteeId(mentorId, menteeId)
-                .map(ChatRoomResponse::from);
+                .map(ChatRoomResponseDTO::from);
     }
 }

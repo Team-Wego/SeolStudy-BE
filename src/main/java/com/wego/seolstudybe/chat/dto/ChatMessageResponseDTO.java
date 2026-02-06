@@ -9,7 +9,7 @@ import java.time.LocalDateTime;
 
 @Getter
 @Builder
-public class ChatMessageResponse {
+public class ChatMessageResponseDTO {
 
     private String messageId;
     private String roomId;
@@ -21,8 +21,8 @@ public class ChatMessageResponse {
     private boolean isRead;
     private LocalDateTime sentAt;
 
-    public static ChatMessageResponse from(ChatMessage message) {
-        return ChatMessageResponse.builder()
+    public static ChatMessageResponseDTO from(ChatMessage message) {
+        return ChatMessageResponseDTO.builder()
                 .messageId(message.getId())
                 .roomId(message.getRoomId())
                 .senderId(message.getSenderId())
