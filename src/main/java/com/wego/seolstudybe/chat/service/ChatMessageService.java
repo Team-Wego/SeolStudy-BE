@@ -51,7 +51,8 @@ public class ChatMessageService {
         ChatMessage savedMessage = chatMessageRepository.save(message);
 
         // 채팅방 마지막 메시지 업데이트
-        chatRoom.updateLastMessage(request.getContent(), request.getSenderId());
+        String lastMessage = resolveLastMessage(request);
+        chatRoom.updateLastMessage(lastMessage, request.getSenderId());
         chatRoom.incrementUnreadCount(request.getSenderId());
         chatRoomRepository.save(chatRoom);
 
@@ -149,6 +150,24 @@ public class ChatMessageService {
         return mediaMessages.stream()
                 .map(ChatMessageResponseDTO::from)
                 .toList();
+    }
+
+    /**
+     * 마지막 메시지 텍스트 결정
+     */
+    private String resolveLastMessage(ChatMessageRequestDTO request) {
+        // 텍스트 내용이 있으면 그대로 사용
+        if (request.getContent() != null && !request.getContent().isBlank()) {
+            return request.getContent();
+        }
+
+        // 파일 타입별 기본 메시지
+        return switch (request.getMessageType()) {
+            case IMAGE -> "사진을 보냈습니다.";
+            case VIDEO -> "동영상을 보냈습니다.";
+            case FILE -> "파일을 보냈습니다.";
+            default -> "";
+        };
     }
 
     /**
