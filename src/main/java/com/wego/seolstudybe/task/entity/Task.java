@@ -7,6 +7,7 @@ import com.wego.seolstudybe.task.entity.enums.TaskType;
 import jakarta.persistence.*;
 import lombok.*;
 import org.springframework.data.annotation.CreatedDate;
+import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -17,6 +18,7 @@ import java.time.LocalDateTime;
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Builder
 @AllArgsConstructor
+@EntityListeners(AuditingEntityListener.class)
 public class Task {
 
     @Id
@@ -83,6 +85,20 @@ public class Task {
     public void changeStatus(boolean isChecked) {
         this.isChecked = isChecked;
         this.checkedAt = isChecked ? LocalDateTime.now() : null;
+    public void update(
+            String title,
+            String description,
+            TaskType type,
+            LocalDate date,
+            Subject subject,
+            Goal goal
+    ) {
+        this.title = title;
+        this.description = description;
+        this.type = type;
+        this.date = date;
+        this.subject = subject;
+        this.goal = goal;
     }
 
 }
