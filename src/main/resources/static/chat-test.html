@@ -199,9 +199,15 @@
                         </div>
                         <div class="chat-messages" id="chatMessages"></div>
                         <div class="chat-input">
+                            <input type="file" id="fileInput" style="display:none" onchange="uploadFile(this)">
+                            <button onclick="document.getElementById('fileInput').click()" style="width:auto; padding: 8px 12px; background: #9C27B0;">📎</button>
                             <input type="text" id="messageInput" placeholder="메시지 입력..."
                                    onkeypress="if(event.key==='Enter') sendMessage()">
                             <button onclick="sendMessage()">전송</button>
+                        </div>
+                        <div id="filePreview" style="display:none; padding: 10px; background: #f0f0f0; border-top: 1px solid #ddd;">
+                            <span id="filePreviewName"></span>
+                            <button onclick="cancelFileUpload()" style="width:auto; padding: 2px 8px; background: #f44336; font-size: 11px; margin-left: 10px;">취소</button>
                         </div>
                     </div>
                 </div>
@@ -421,11 +427,30 @@
         }
 
         // ===== 메시지 전송 =====
+        let pendingFile = null; // 업로드 대기 중인 파일 정보
+
         function sendMessage() {
             const input = document.getElementById('messageInput');
             const content = input.value.trim();
 
-            if (!content || !stompClient || !currentRoomId) return;
+            if (!stompClient || !currentRoomId) return;
+
+            // 파일 메시지 전송
+            if (pendingFile) {
+                stompClient.send('/pub/chat/message', {}, JSON.stringify({
+                    roomId: currentRoomId,
+                    senderId: currentUserId,
+                    messageType: pendingFile.fileType,
+                    content: pendingFile.fileName,
+                    fileUrl: pendingFile.fileUrl,
+                    fileName: pendingFile.fileName
+                }));
+                cancelFileUpload();
+                return;
+            }
+
+            // 텍스트 메시지 전송
+            if (!content) return;
 
             stompClient.send('/pub/chat/message', {}, JSON.stringify({
                 roomId: currentRoomId,
@@ -435,6 +460,44 @@
             }));
 
             input.value = '';
+        }
+
+        // ===== 파일 업로드 =====
+        async function uploadFile(input) {
+            const file = input.files[0];
+            if (!file) return;
+
+            const formData = new FormData();
+            formData.append('file', file);
+
+            try {
+                const response = await fetch('/files/chat', {
+                    method: 'POST',
+                    body: formData
+                });
+
+                if (!response.ok) throw new Error('파일 업로드 실패');
+
+                const data = await response.json();
+                pendingFile = data;
+
+                // 미리보기 표시
+                document.getElementById('filePreview').style.display = 'block';
+                document.getElementById('filePreviewName').textContent = `📎 ${data.fileName}`;
+                document.getElementById('messageInput').placeholder = '전송 버튼을 눌러 파일을 보내세요';
+
+            } catch (error) {
+                console.error('파일 업로드 실패:', error);
+                alert('파일 업로드에 실패했습니다.');
+            }
+
+            input.value = ''; // 파일 입력 초기화
+        }
+
+        function cancelFileUpload() {
+            pendingFile = null;
+            document.getElementById('filePreview').style.display = 'none';
+            document.getElementById('messageInput').placeholder = '메시지 입력...';
         }
 
         // ===== 메시지 표시 =====
@@ -449,9 +512,43 @@
                 hour: '2-digit', minute: '2-digit'
             });
 
+            // 메시지 타입에 따른 내용 렌더링
+            let contentHtml = '';
+            switch (msg.messageType) {
+                case 'IMAGE':
+                    contentHtml = `
+                        <a href="${msg.fileUrl}" target="_blank">
+                            <img src="${msg.fileUrl}" alt="${msg.fileName}" style="max-width: 200px; max-height: 200px; border-radius: 8px; cursor: pointer;">
+                        </a>
+                        <div style="font-size: 11px; margin-top: 5px;">${msg.fileName}</div>
+                    `;
+                    break;
+                case 'VIDEO':
+                    contentHtml = `
+                        <video src="${msg.fileUrl}" controls style="max-width: 250px; border-radius: 8px;"></video>
+                        <div style="font-size: 11px; margin-top: 5px;">${msg.fileName}</div>
+                    `;
+                    break;
+                case 'FILE':
+                    contentHtml = `
+                        <a href="${msg.fileUrl}" download="${msg.fileName}" style="color: inherit; text-decoration: none;">
+                            <div style="display: flex; align-items: center; gap: 8px;">
+                                <span style="font-size: 24px;">📄</span>
+                                <div>
+                                    <div style="font-weight: bold;">${msg.fileName}</div>
+                                    <div style="font-size: 11px; opacity: 0.8;">클릭하여 다운로드</div>
+                                </div>
+                            </div>
+                        </a>
+                    `;
+                    break;
+                default: // TEXT
+                    contentHtml = msg.content;
+            }
+
             messageDiv.innerHTML = `
                 ${!isSent ? `<div class="sender">${getUserName(msg.senderId)}</div>` : ''}
-                ${msg.content}
+                ${contentHtml}
                 <div class="time">${time}</div>
             `;
 
