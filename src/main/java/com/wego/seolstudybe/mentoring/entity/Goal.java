@@ -53,4 +53,10 @@ public class Goal {
     public void softDelete(final LocalDateTime deletedAt) {
         this.deletedAt = deletedAt;
     }
+
+    public void updateGoal(final String name, final Subject subject, final WorksheetFile worksheetFile) {
+        this.name = name;
+        this.subject = subject;
+        this.worksheetFile = worksheetFile;
+    }
 }

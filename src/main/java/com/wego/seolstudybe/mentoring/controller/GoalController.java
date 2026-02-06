@@ -1,6 +1,7 @@
 package com.wego.seolstudybe.mentoring.controller;
 
 import com.wego.seolstudybe.mentoring.dto.CreateGoalRequest;
+import com.wego.seolstudybe.mentoring.dto.UpdateGoalRequest;
 import com.wego.seolstudybe.mentoring.entity.Goal;
 import com.wego.seolstudybe.mentoring.service.GoalService;
 import io.swagger.v3.oas.annotations.Operation;
@@ -25,6 +26,17 @@ public class GoalController {
                                               @Valid @RequestPart(name = "request") final CreateGoalRequest request,
                                               @RequestPart(name = "file", required = false) final MultipartFile file) {
         final Goal goal = goalService.createGoal(memberId, request, file);
+
+        return ResponseEntity.ok(goal.getId());
+    }
+
+    @Operation(summary = "목표 수정")
+    @PutMapping(value = "/{goalId}", consumes = {MediaType.MULTIPART_FORM_DATA_VALUE})
+    public ResponseEntity<Integer> updateGoal(@CookieValue("memberId") final int memberId,
+                                              @PathVariable("goalId") final int goalId,
+                                              @Valid @RequestPart(name = "request") final UpdateGoalRequest request,
+                                              @RequestPart(name = "file", required = false) final MultipartFile file) {
+        final Goal goal = goalService.updateGoal(memberId, goalId, request, file);
 
         return ResponseEntity.ok(goal.getId());
     }

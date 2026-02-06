@@ -5,6 +5,7 @@ import com.wego.seolstudybe.member.entity.enums.Role;
 import com.wego.seolstudybe.member.exception.MemberNotFoundException;
 import com.wego.seolstudybe.member.repository.MemberRepository;
 import com.wego.seolstudybe.mentoring.dto.CreateGoalRequest;
+import com.wego.seolstudybe.mentoring.dto.UpdateGoalRequest;
 import com.wego.seolstudybe.mentoring.entity.Goal;
 import com.wego.seolstudybe.mentoring.entity.WorksheetFile;
 import com.wego.seolstudybe.mentoring.entity.enums.Subject;
@@ -53,11 +54,53 @@ public class GoalServiceImpl implements GoalService {
 
         final Goal goal = findByGoalId(goalId);
 
-        if (member.getId() != goal.getCreator().getId()) {
-            throw new GoalAccessDeniedException();
-        }
+        validateGoalCreator(member, goal);
 
         goal.softDelete(LocalDateTime.now());
+    }
+
+    @Transactional
+    @Override
+    public Goal updateGoal(final int memberId, final int goalId, final UpdateGoalRequest request,
+                           final MultipartFile file) {
+        final Member member = findByMemberId(memberId);
+
+        final Goal goal = findByGoalId(goalId);
+
+        validateGoalCreator(member, goal);
+
+        final WorksheetFile worksheetFile = updateWorksheetFile(goal, file, request.isWorksheetChanged(), member,
+                request.getSubject());
+
+        goal.updateGoal(request.getName(), request.getSubject(), worksheetFile);
+
+        return goal;
+    }
+
+    private WorksheetFile updateWorksheetFile(final Goal goal, final MultipartFile file,
+                                              final boolean isWorksheetChanged, final Member member,
+                                              final Subject subject) {
+        final WorksheetFile worksheetFile = goal.getWorksheetFile();
+
+        if (!isWorksheetChanged) {
+            if (worksheetFile != null) {
+                worksheetFile.updateSubject(subject);
+            }
+
+            return worksheetFile;
+        }
+
+        if (worksheetFile != null) {
+            worksheetFileRepository.delete(worksheetFile);
+        }
+
+        return saveWorksheetFile(file, subject, member);
+    }
+
+    private void validateGoalCreator(final Member creator, final Goal goal) {
+        if (creator.getId() != goal.getCreator().getId()) {
+            throw new GoalAccessDeniedException();
+        }
     }
 
     private Member findTargetMentee(final Member creator, final Integer menteeId) {
