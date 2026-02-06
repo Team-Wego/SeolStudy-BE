@@ -37,6 +37,7 @@ public enum ErrorCode {
 
     /* FEEDBACK */
     TASK_ID_REQUIRED(HttpStatus.BAD_REQUEST, "FEEDBACK001", "과제 피드백 등록 시 과제 ID가 필수입니다."),
+    FEEDBACK_NOT_FOUND(HttpStatus.NOT_FOUND, "FEEDBACK002", "피드백 데이터를 찾을 수 없습니다."),
 
     /* TASK */
     TASK_NOT_FOUND(HttpStatus.NOT_FOUND, "TASK001", "과제가 존재하지 않습니다."),

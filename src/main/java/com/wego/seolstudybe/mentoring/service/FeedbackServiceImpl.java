@@ -2,12 +2,16 @@ package com.wego.seolstudybe.mentoring.service;
 
 import com.wego.seolstudybe.common.service.S3Service;
 import com.wego.seolstudybe.member.entity.Member;
+import com.wego.seolstudybe.member.entity.enums.Role;
 import com.wego.seolstudybe.member.exception.MemberNotFoundException;
 import com.wego.seolstudybe.member.repository.MemberRepository;
 import com.wego.seolstudybe.mentoring.dto.CreateFeedbackRequest;
+import com.wego.seolstudybe.mentoring.dto.FeedbackImageResponse;
+import com.wego.seolstudybe.mentoring.dto.FeedbackResponse;
 import com.wego.seolstudybe.mentoring.entity.Feedback;
 import com.wego.seolstudybe.mentoring.entity.FeedbackImage;
 import com.wego.seolstudybe.mentoring.entity.enums.FeedbackType;
+import com.wego.seolstudybe.mentoring.exception.FeedbackNotFoundException;
 import com.wego.seolstudybe.mentoring.exception.TaskIdRequiredException;
 import com.wego.seolstudybe.mentoring.repository.FeedbackImageRepository;
 import com.wego.seolstudybe.mentoring.repository.FeedbackRepository;
@@ -22,6 +26,7 @@ import org.springframework.web.multipart.MultipartFile;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @RequiredArgsConstructor
 @Service
@@ -63,6 +68,25 @@ public class FeedbackServiceImpl implements FeedbackService {
         uploadFiles(files, feedback);
 
         return feedback;
+    }
+
+    @Transactional(readOnly = true)
+    @Override
+    public FeedbackResponse getFeedback(final int memberId, final int feedbackId) {
+        final Member member = findMemberById(memberId);
+
+        final Feedback feedback = feedbackRepository.findById(feedbackId).orElseThrow(FeedbackNotFoundException::new);
+
+        if (member.getRole().equals(Role.MENTEE) && feedback.getMentee().getId() != member.getId()) {
+            throw new FeedbackNotFoundException();
+        }
+
+        final List<FeedbackImageResponse> feedbackImages = feedbackImageRepository.findByFeedbackId(feedback.getId())
+                .stream()
+                .map(FeedbackImageResponse::of)
+                .collect(Collectors.toList());
+
+        return FeedbackResponse.of(feedback, feedbackImages);
     }
 
     private Task findTaskById(final Integer taskId) {

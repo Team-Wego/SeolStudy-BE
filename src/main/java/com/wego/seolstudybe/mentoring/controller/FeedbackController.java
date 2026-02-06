@@ -1,6 +1,7 @@
 package com.wego.seolstudybe.mentoring.controller;
 
 import com.wego.seolstudybe.mentoring.dto.CreateFeedbackRequest;
+import com.wego.seolstudybe.mentoring.dto.FeedbackResponse;
 import com.wego.seolstudybe.mentoring.entity.Feedback;
 import com.wego.seolstudybe.mentoring.service.FeedbackService;
 import io.swagger.v3.oas.annotations.Operation;
@@ -28,5 +29,14 @@ public class FeedbackController {
         final Feedback feedback = feedbackService.createFeedback(memberId, request, files);
 
         return ResponseEntity.ok(feedback.getId());
+    }
+
+    @Operation(summary = "피드백 상세 조회")
+    @GetMapping("/feedback/{feedbackId}")
+    public ResponseEntity<FeedbackResponse> getFeedback(@CookieValue("memberId") final int memberId,
+                                                        @PathVariable("feedbackId") final int feedbackId) {
+        final FeedbackResponse response = feedbackService.getFeedback(memberId, feedbackId);
+
+        return ResponseEntity.ok(response);
     }
 }
