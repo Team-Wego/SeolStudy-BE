@@ -4,6 +4,7 @@ import com.wego.seolstudybe.chat.dto.ChatMessageRequest;
 import com.wego.seolstudybe.chat.dto.ChatMessageResponse;
 import com.wego.seolstudybe.chat.entity.ChatMessage;
 import com.wego.seolstudybe.chat.entity.ChatRoom;
+import com.wego.seolstudybe.chat.entity.enums.MessageType;
 import com.wego.seolstudybe.chat.repository.ChatMessageRepository;
 import com.wego.seolstudybe.chat.repository.ChatRoomRepository;
 import lombok.RequiredArgsConstructor;
@@ -83,5 +84,30 @@ public class ChatMessageService {
      */
     public long getUnreadCount(String roomId, Long userId) {
         return chatMessageRepository.countByRoomIdAndIsReadFalseAndSenderIdNot(roomId, userId);
+    }
+
+    /**
+     * 채팅방의 모든 미디어/파일 조회 (이미지, 동영상, 파일)
+     */
+    public List<ChatMessageResponse> getMediaFiles(String roomId) {
+        List<MessageType> mediaTypes = List.of(MessageType.IMAGE, MessageType.VIDEO, MessageType.FILE);
+        List<ChatMessage> mediaMessages = chatMessageRepository
+                .findByRoomIdAndMessageTypeInOrderBySentAtDesc(roomId, mediaTypes);
+
+        return mediaMessages.stream()
+                .map(ChatMessageResponse::from)
+                .toList();
+    }
+
+    /**
+     * 채팅방의 특정 타입 미디어 조회
+     */
+    public List<ChatMessageResponse> getMediaFilesByType(String roomId, MessageType type) {
+        List<ChatMessage> mediaMessages = chatMessageRepository
+                .findByRoomIdAndMessageTypeOrderBySentAtDesc(roomId, type);
+
+        return mediaMessages.stream()
+                .map(ChatMessageResponse::from)
+                .toList();
     }
 }
