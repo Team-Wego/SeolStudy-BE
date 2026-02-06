@@ -17,6 +17,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
+import java.util.List;
 
 @Service
 @RequiredArgsConstructor
@@ -60,7 +61,32 @@ public class MenteeTaskServiceImpl implements MenteeTaskService {
     @Transactional
     public void updateTaskSequence(int memberId, int taskId, TaskSequenceUpdateRequest request) {
         Task task = findTaskByIdAndMemberId(taskId, memberId);
-        task.updateSequence(request.getSequence());
+        int oldSequence = task.getSequence();
+        int newSequence = request.getSequence();
+
+        if (oldSequence == newSequence) {
+            return;
+        }
+
+        List<Task> tasks = taskRepository.findByMenteeIdAndDateOrderBySequenceAsc(memberId, task.getDate());
+
+        if (oldSequence > newSequence) {
+            // 위로 이동: newSequence ~ oldSequence-1 사이의 task들 +1
+            for (Task t : tasks) {
+                if (t.getSequence() >= newSequence && t.getSequence() < oldSequence) {
+                    t.updateSequence(t.getSequence() + 1);
+                }
+            }
+        } else {
+            // 아래로 이동: oldSequence+1 ~ newSequence 사이의 task들 -1
+            for (Task t : tasks) {
+                if (t.getSequence() > oldSequence && t.getSequence() <= newSequence) {
+                    t.updateSequence(t.getSequence() - 1);
+                }
+            }
+        }
+
+        task.updateSequence(newSequence);
     }
 
     @Override

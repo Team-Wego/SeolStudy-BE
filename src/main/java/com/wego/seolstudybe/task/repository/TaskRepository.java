@@ -18,4 +18,6 @@ public interface TaskRepository extends JpaRepository<Task, Integer> {
 
     @Query("SELECT COALESCE(MAX(t.sequence), 0) FROM Task t WHERE t.mentee.id = :menteeId AND t.date = :date")
     int findMaxSequenceByMenteeIdAndDate(@Param("menteeId") int menteeId, @Param("date") LocalDate date);
+
+    List<Task> findByMenteeIdAndDateOrderBySequenceAsc(int menteeId, LocalDate date);
 }
