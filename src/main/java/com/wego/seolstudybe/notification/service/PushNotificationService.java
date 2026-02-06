@@ -99,30 +99,4 @@ public class PushNotificationService {
         }
     }
 
-    /**
-     * 채팅 메시지 알림 전송
-     */
-    public void sendChatNotification(Long receiverId, Long senderId, String message, String roomId) {
-        fcmTokenRepository.findByMemberId(receiverId)
-                .ifPresent(fcmToken -> {
-                    try {
-                        Message msg = Message.builder()
-                                .setToken(fcmToken.getToken())
-                                .setNotification(Notification.builder()
-                                        .setTitle("새 메시지가 도착했습니다")
-                                        .setBody(message)
-                                        .build())
-                                .putData("type", "CHAT")
-                                .putData("roomId", roomId)
-                                .putData("senderId", String.valueOf(senderId))
-                                .build();
-
-                        firebaseMessaging.send(msg);
-                        log.info("채팅 알림 전송: receiverId={}, roomId={}", receiverId, roomId);
-
-                    } catch (FirebaseMessagingException e) {
-                        log.error("채팅 알림 전송 실패: {}", e.getMessage());
-                    }
-                });
-    }
 }

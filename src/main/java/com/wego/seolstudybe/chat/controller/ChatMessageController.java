@@ -5,13 +5,16 @@ import com.wego.seolstudybe.chat.dto.ChatMessageResponseDTO;
 import com.wego.seolstudybe.chat.dto.ChatRoomResponseDTO;
 import com.wego.seolstudybe.chat.service.ChatMessageService;
 import com.wego.seolstudybe.chat.service.ChatRoomService;
-import com.wego.seolstudybe.notification.service.PushNotificationService;
+import com.wego.seolstudybe.notification.entity.enums.NotificationType;
+import com.wego.seolstudybe.notification.service.NotificationService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.messaging.handler.annotation.MessageMapping;
 import org.springframework.messaging.handler.annotation.Payload;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.stereotype.Controller;
+
+import java.util.Map;
 
 @Slf4j
 @Controller
@@ -21,7 +24,7 @@ public class ChatMessageController {
     private final ChatMessageService chatMessageService;
     private final ChatRoomService chatRoomService;
     private final SimpMessagingTemplate messagingTemplate;
-    private final PushNotificationService pushNotificationService;
+    private final NotificationService notificationService;
 
     /**
      * 메시지 전송
@@ -40,17 +43,21 @@ public class ChatMessageController {
         // 해당 채팅방 구독자들에게 메시지 전송
         messagingTemplate.convertAndSend("/sub/chat/room/" + request.getRoomId(), response);
 
-        // 상대방에게 알림 전송 (채팅방 정보와 함께)
+        // 상대방에게 알림 전송 (DB 저장 + FCM + WebSocket 통합)
         ChatRoomResponseDTO roomInfo = chatRoomService.getChatRoom(request.getRoomId());
         Long receiverId = request.getSenderId().equals(roomInfo.getMentorId())
                 ? roomInfo.getMenteeId()
                 : roomInfo.getMentorId();
 
-        // 개인 알림 채널로 새 메시지 알림 전송
-        messagingTemplate.convertAndSend("/sub/user/" + receiverId + "/notification", response);
-
-        // FCM 푸시 알림 전송 (브라우저가 닫혀있거나 백그라운드일 때)
-        pushNotificationService.sendChatNotification(receiverId, request.getSenderId(), request.getContent(), request.getRoomId());
+        notificationService.notify(
+                receiverId,
+                NotificationType.CHAT,
+                "새 메시지가 도착했습니다",
+                response.getContent() != null && !response.getContent().isBlank()
+                        ? response.getContent() : "파일을 보냈습니다.",
+                Map.of("type", "CHAT", "roomId", request.getRoomId(),
+                        "senderId", String.valueOf(request.getSenderId()))
+        );
 
         log.info("메시지 전송 완료: roomId={}, receiverId={}", request.getRoomId(), receiverId);
     }
