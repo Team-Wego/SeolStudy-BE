@@ -11,7 +11,9 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 @Slf4j
@@ -44,6 +46,30 @@ public class FileUploadController {
         response.put("fileType", fileType);
 
         return ResponseEntity.ok(response);
+    }
+
+    @Operation(summary = "채팅 다건 파일 업로드", description = "여러 파일을 한번에 S3에 업로드합니다. (각 파일 최대 50MB)")
+    @ApiResponses({
+            @ApiResponse(responseCode = "200", description = "업로드 성공"),
+            @ApiResponse(responseCode = "400", description = "파일이 비어있거나 허용되지 않는 파일 형식"),
+            @ApiResponse(responseCode = "500", description = "S3 업로드 실패")
+    })
+    @PostMapping("/chat/multiple")
+    public ResponseEntity<List<Map<String, String>>> uploadMultipleChatFiles(
+            @RequestParam("files") List<MultipartFile> files) {
+        log.info("다건 파일 업로드 요청: fileCount={}", files.size());
+
+        List<Map<String, String>> responses = new ArrayList<>();
+        for (MultipartFile file : files) {
+            String fileUrl = s3Service.uploadFile(file, "chat");
+            Map<String, String> fileInfo = new HashMap<>();
+            fileInfo.put("fileUrl", fileUrl);
+            fileInfo.put("fileName", file.getOriginalFilename());
+            fileInfo.put("fileType", determineFileType(file.getContentType()));
+            responses.add(fileInfo);
+        }
+
+        return ResponseEntity.ok(responses);
     }
 
     @Operation(summary = "파일 삭제", description = "S3에서 파일을 삭제합니다.")
