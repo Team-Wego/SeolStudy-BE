@@ -23,4 +23,9 @@ public class TaskWorksheet {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "file_id", nullable = false)
     private WorksheetFile worksheetFile;
+
+    public TaskWorksheet(Task task, WorksheetFile worksheetFile) {
+        this.task = task;
+        this.worksheetFile = worksheetFile;
+    }
 }
