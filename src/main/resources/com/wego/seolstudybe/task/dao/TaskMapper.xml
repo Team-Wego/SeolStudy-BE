@@ -1,0 +1,139 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.wego.seolstudybe.task.dao.TaskMapper">
+
+    <!-- 기간별 과제/할일 목록 조회 -->
+    <select id="findTasksByMenteeIdAndDateRange"
+            resultType="com.wego.seolstudybe.task.dto.response.TaskListResponse">
+        SELECT
+            A.id,
+            A.title,
+            A.type,
+            A.subject,
+            A.date,
+            A.is_checked AS isChecked,
+            A.has_feedback AS hasFeedback,
+            A.sequence
+        FROM task A
+        WHERE A.mentee_id = #{menteeId}
+          AND A.date BETWEEN #{startDate} AND #{endDate}
+        ORDER BY A.date, A.sequence
+    </select>
+
+    <!-- 일일 할일/과제 목록 조회 (공부 시간 포함) -->
+    <select id="findDailyTasksByMenteeIdAndDate"
+            resultType="com.wego.seolstudybe.task.dto.response.DailyTaskResponse">
+        SELECT
+            A.id,
+            A.title,
+            A.subject,
+            A.type,
+            A.is_checked AS isChecked,
+            A.has_feedback AS hasFeedback,
+            A.sequence,
+            COALESCE(SUM(TIMESTAMPDIFF(MINUTE, B.started_at, B.ended_at)), 0) AS totalMinutes,
+            A.goal_id AS goalId,
+            C.name AS goalName,
+            A.submitted_at AS submittedAt
+        FROM task A
+                 LEFT JOIN study_time B ON A.id = B.task_id
+                 LEFT JOIN goal C ON A.goal_id = C.id
+        WHERE A.mentee_id = #{menteeId}
+          AND A.date = #{date}
+        GROUP BY A.id, A.title, A.subject, A.type, A.is_checked, A.has_feedback, A.sequence,
+                 A.goal_id, C.name, A.submitted_at
+        ORDER BY A.sequence
+    </select>
+
+    <!-- 과제/할일 상세 조회 -->
+    <select id="findTaskById"
+            resultType="com.wego.seolstudybe.task.dto.response.TaskDetailResponse">
+        SELECT
+            A.id,
+            A.title,
+            A.description,
+            A.is_checked AS isChecked,
+            A.subject,
+            A.type,
+            A.date,
+            A.comment,
+            A.has_feedback AS hasFeedback,
+            A.sequence,
+            A.checked_at AS checkedAt,
+            A.submitted_at AS submittedAt,
+            A.created_at AS createdAt,
+            A.goal_id AS goalId
+        FROM task A
+        WHERE A.id = #{taskId}
+    </select>
+
+    <!-- 과제에 연결된 학습지 파일 조회 -->
+    <select id="findWorksheetFilesByTaskId"
+            resultType="com.wego.seolstudybe.task.dto.response.WorksheetFileDto">
+        SELECT
+            B.id,
+            B.name,
+            B.url,
+            B.size,
+            B.type,
+            B.subject
+        FROM task_worksheet A
+                 JOIN worksheet_file B ON A.file_id = B.id
+        WHERE A.task_id = #{taskId}
+    </select>
+
+    <!-- 과제에 연결된 이미지 조회 -->
+    <select id="findImagesByTaskId"
+            resultType="com.wego.seolstudybe.task.dto.response.TaskImageDto">
+        SELECT
+            A.id,
+            A.url
+        FROM task_image A
+        WHERE A.task_id = #{taskId}
+    </select>
+
+    <!-- 플래너 코멘트 조회 -->
+    <select id="findPlannerCommentByMenteeIdAndDate"
+            resultType="com.wego.seolstudybe.task.dto.response.PlannerCommentResponse">
+        SELECT
+            A.id,
+            A.date,
+            A.comment
+        FROM planner A
+        WHERE A.mentee_id = #{menteeId}
+          AND A.date = #{date}
+    </select>
+
+    <!-- 일일 공부 시간 조회 -->
+    <select id="findStudyTimeByMenteeIdAndDate"
+            resultType="com.wego.seolstudybe.task.dto.response.StudyTimeResponse">
+        SELECT
+            #{date} AS date,
+            COALESCE(SUM(TIMESTAMPDIFF(MINUTE, B.started_at, B.ended_at)), 0) AS totalMinutes
+        FROM task A
+            LEFT JOIN study_time B ON A.id = B.task_id
+        WHERE A.mentee_id = #{menteeId}
+          AND A.date = #{date}
+    </select>
+
+    <!-- 일일 공부 시간 상세 목록 조회 -->
+    <select id="findStudyTimeDetailsByMenteeIdAndDate"
+            resultType="com.wego.seolstudybe.task.dto.response.StudyTimeDetailDto">
+        SELECT
+            A.id,
+            A.task_id AS taskId,
+            B.title AS taskTitle,
+            B.subject,
+            A.started_at AS startedAt,
+            A.ended_at AS endedAt
+        FROM study_time A
+            JOIN task B ON A.task_id = B.id
+        WHERE B.mentee_id = #{menteeId}
+          AND B.date = #{date}
+        ORDER BY A.started_at
+    </select>
+
+</mapper>
