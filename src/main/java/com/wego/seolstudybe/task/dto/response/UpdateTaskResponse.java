@@ -1,4 +1,4 @@
-package com.wego.seolstudybe.task.dto;
+package com.wego.seolstudybe.task.dto.response;
 
 import com.wego.seolstudybe.mentoring.entity.enums.Subject;
 import com.wego.seolstudybe.task.entity.enums.TaskType;
@@ -9,7 +9,7 @@ import java.time.LocalDate;
 
 @Getter
 @AllArgsConstructor
-public class TaskResponse {
+public class UpdateTaskResponse {
 
     private int taskId;
     private int menteeId;
