@@ -59,8 +59,9 @@ public class GoalController {
     @Operation(summary = "목표 목록 조회")
     @GetMapping
     public ResponseEntity<List<GoalResponse>> getGoals(@CookieValue("memberId") final int memberId,
-                                                   @RequestParam(defaultValue = "ALL") final GoalCreator createdBy) {
-        final List<GoalResponse> responses = goalService.getGoals(memberId, createdBy);
+                                                       @RequestParam(required = false) final Integer menteeId,
+                                                       @RequestParam(defaultValue = "ALL") final GoalCreator createdBy) {
+        final List<GoalResponse> responses = goalService.getGoals(memberId, menteeId, createdBy);
 
         return ResponseEntity.ok(responses);
     }

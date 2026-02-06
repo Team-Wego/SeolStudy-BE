@@ -33,12 +33,12 @@
           FROM goal AS A
           LEFT JOIN worksheet_file AS B
             ON A.worksheet_id = B.id
-         WHERE A.deleted_at IS NULL AND A.target_mentee_id = #{memberId}
+         WHERE A.deleted_at IS NULL AND A.target_mentee_id = #{menteeId}
         <if test="createdBy.name() == 'MENTOR'">
-            AND A.creator_id != #{memberId}
+            AND A.creator_id != #{menteeId}
         </if>
         <if test="createdBy.name() == 'MENTEE'">
-            AND A.creator_id = #{memberId}
+            AND A.creator_id = #{menteeId}
         </if>
     </select>
 

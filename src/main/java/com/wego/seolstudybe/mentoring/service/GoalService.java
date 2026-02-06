@@ -16,5 +16,5 @@ public interface GoalService {
 
     Goal updateGoal(final int memberId, final int goalId, final UpdateGoalRequest request, final MultipartFile file);
 
-    List<GoalResponse> getGoals(final int memberId, final GoalCreator createdBy);
+    List<GoalResponse> getGoals(final int memberId, final Integer menteeId, final GoalCreator createdBy);
 }

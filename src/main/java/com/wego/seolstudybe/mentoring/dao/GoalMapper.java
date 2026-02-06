@@ -9,6 +9,6 @@ import java.util.List;
 
 @Mapper
 public interface GoalMapper {
-    List<GoalResponse> findGoalsByCreatedBy(@Param("memberId") final int memberId,
+    List<GoalResponse> findGoalsByCreatedBy(@Param("menteeId") final int menteeId,
                                             @Param("createdBy") final GoalCreator createdBy);
 }

@@ -11,7 +11,11 @@ import com.wego.seolstudybe.mentoring.entity.Goal;
 import com.wego.seolstudybe.mentoring.entity.WorksheetFile;
 import com.wego.seolstudybe.mentoring.entity.enums.GoalCreator;
 import com.wego.seolstudybe.mentoring.entity.enums.Subject;
+import com.wego.seolstudybe.member.entity.enums.Role;
+import com.wego.seolstudybe.common.error.ErrorCode;
+import com.wego.seolstudybe.common.error.exception.BusinessException;
 import com.wego.seolstudybe.mentoring.exception.GoalAccessDeniedException;
+import com.wego.seolstudybe.mentoring.exception.GoalMenteeIdRequiredException;
 import com.wego.seolstudybe.mentoring.exception.GoalNotFoundException;
 import com.wego.seolstudybe.mentoring.repository.GoalRepository;
 import com.wego.seolstudybe.mentoring.repository.WorksheetFileRepository;
@@ -78,12 +82,26 @@ public class GoalServiceImpl implements GoalService {
 
     @Transactional(readOnly = true)
     @Override
-    public List<GoalResponse> getGoals(final int memberId, final GoalCreator createdBy) {
+    public List<GoalResponse> getGoals(final int memberId, final Integer menteeId, final GoalCreator createdBy) {
         final Member member = findByMemberId(memberId);
 
-        final List<GoalResponse> goals = goalMapper.findGoalsByCreatedBy(memberId, createdBy);
+        final int resolvedMenteeId = resolveMenteeId(member, menteeId);
+
+        final List<GoalResponse> goals = goalMapper.findGoalsByCreatedBy(resolvedMenteeId, createdBy);
 
         return goals;
+    }
+
+    private int resolveMenteeId(final Member member, final Integer menteeId) {
+        if (menteeId != null) {
+            return menteeId;
+        }
+
+        if (member.getRole() == Role.MENTEE) {
+            return member.getId();
+        }
+
+        throw new GoalMenteeIdRequiredException();
     }
 
     private WorksheetFile updateWorksheetFile(final Goal goal, final MultipartFile file,
