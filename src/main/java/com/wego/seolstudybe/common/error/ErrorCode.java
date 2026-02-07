@@ -30,6 +30,7 @@ public enum ErrorCode {
     /* NOTIFICATION */
     FCM_TOKEN_NOT_FOUND(HttpStatus.NOT_FOUND, "NOTI001", "FCM 토큰을 찾을 수 없습니다."),
     PUSH_NOTIFICATION_FAILED(HttpStatus.INTERNAL_SERVER_ERROR, "NOTI002", "푸시 알림 전송에 실패했습니다."),
+    NOTIFICATION_NOT_FOUND(HttpStatus.NOT_FOUND, "NOTI003", "알림을 찾을 수 없습니다."),
 
     /* GOAL */
     GOAL_NOT_FOUND(HttpStatus.NOT_FOUND, "GOAL001", "목표 데이터를 찾을 수 없습니다."),
