@@ -56,7 +56,10 @@ public enum ErrorCode {
     PLANNER_NOT_FOUND(HttpStatus.NOT_FOUND, "PLANNER001", "플래너를 찾을 수 없습니다."),
 
     /* STUDY_TIME */
-    STUDY_TIME_NOT_FOUND(HttpStatus.NOT_FOUND, "STUDY_TIME001", "공부 시간이 존재하지 않습니다.");
+    STUDY_TIME_NOT_FOUND(HttpStatus.NOT_FOUND, "STUDY_TIME001", "공부 시간이 존재하지 않습니다."),
+
+    /* TASK_IMAGE */
+    TASK_IMAGE_UPLOAD_PERIOD_EXPIRED(HttpStatus.BAD_REQUEST, "TASK_IMAGE001", "과제 인증 업로드 가능 기간이 만료되었습니다.");
 
     private final HttpStatus status;
     private final String code;
