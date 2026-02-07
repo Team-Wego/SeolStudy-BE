@@ -36,6 +36,12 @@ public enum ErrorCode {
     GOAL_ACCESS_DENIED(HttpStatus.FORBIDDEN, "GOAL002", "목표 데이터를 수정/삭제 권한이 없습니다."),
     GOAL_MENTEE_ID_REQUIRED(HttpStatus.BAD_REQUEST, "GOAL003", "멘토는 멘티 ID를 지정해야 합니다."),
 
+    /* FEEDBACK */
+    TASK_ID_REQUIRED(HttpStatus.BAD_REQUEST, "FEEDBACK001", "과제 피드백 등록 시 과제 ID가 필수입니다."),
+    FEEDBACK_NOT_FOUND(HttpStatus.NOT_FOUND, "FEEDBACK002", "피드백 데이터를 찾을 수 없습니다."),
+    FEEDBACK_ACCESS_DENIED(HttpStatus.FORBIDDEN, "FEEDBACK003", "피드백 데이터를 접근할 권한이 없습니다."),
+    FEEDBACK_ALREADY_EXIST(HttpStatus.CONFLICT, "FEEDBACK004", "이미 피드백이 등록되어있습니다."),
+
     /* TASK */
     TASK_NOT_FOUND(HttpStatus.NOT_FOUND, "TASK001", "과제가 존재하지 않습니다."),
     NOT_ASSIGNED_MENTEE(HttpStatus.FORBIDDEN, "MEMBER002", "담당 멘티가 아닙니다."),
