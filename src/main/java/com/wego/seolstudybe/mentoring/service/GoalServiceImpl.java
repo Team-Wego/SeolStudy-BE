@@ -43,7 +43,7 @@ public class GoalServiceImpl implements GoalService {
 
         final Member targetMentee = findByMemberId(request.getMenteeId());
 
-        final WorksheetFile worksheetFile = saveWorksheetFile(file, request.getSubject(), creator);
+        final WorksheetFile worksheetFile = saveWorksheetFile(file, request.getSubject(), targetMentee);
 
         final Goal goal = new Goal(worksheetFile, request.getName(), request.getSubject(), creator, targetMentee);
 
