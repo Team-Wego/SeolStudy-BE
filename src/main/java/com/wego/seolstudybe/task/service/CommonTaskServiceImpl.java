@@ -67,4 +67,12 @@ public class CommonTaskServiceImpl implements CommonTaskService {
         }
         return response;
     }
+
+    @Override
+    @Transactional(readOnly = true)
+    public StudyStatusResponse getStudyStatus(int menteeId, LocalDate startDate, LocalDate endDate) {
+        List<SubjectStudyStatusResponse> subjects = taskMapper.findStudyStatusByMenteeIdAndDateRange(
+                menteeId, startDate, endDate);
+        return StudyStatusResponse.from(subjects != null ? subjects : Collections.emptyList());
+    }
 }

@@ -16,4 +16,6 @@ public interface CommonTaskService {
     PlannerCommentResponse getPlannerComment(int menteeId, LocalDate date);
 
     DailyStudyTimeResponse getStudyTime(int menteeId, LocalDate date);
+
+    StudyStatusResponse getStudyStatus(int menteeId, LocalDate startDate, LocalDate endDate);
 }

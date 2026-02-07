@@ -4,15 +4,21 @@ import com.wego.seolstudybe.task.dto.request.TaskCreateRequest;
 import com.wego.seolstudybe.task.dto.request.TaskSequenceUpdateRequest;
 import com.wego.seolstudybe.task.dto.request.TaskStatusUpdateRequest;
 import com.wego.seolstudybe.task.dto.request.TaskUpdateRequest;
+import com.wego.seolstudybe.task.dto.response.StudyStatusResponse;
 import com.wego.seolstudybe.task.dto.response.TaskResponse;
+import com.wego.seolstudybe.task.service.CommonTaskService;
 import com.wego.seolstudybe.task.service.MenteeTaskService;
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+
+import java.time.LocalDate;
 
 @Tag(name = "멘티 할 일 관리 API", description = "멘티 할 일 관리 API")
 @RestController
@@ -21,6 +27,7 @@ import org.springframework.web.bind.annotation.*;
 public class MenteeTaskController {
 
     private final MenteeTaskService menteeTaskService;
+    private final CommonTaskService commonTaskService;
 
     @PostMapping
     @Operation(summary = "할 일 등록", description = "멘티의 할 일을 등록합니다.")
@@ -73,5 +80,18 @@ public class MenteeTaskController {
     ) {
         TaskResponse response = menteeTaskService.updateTaskStatus(menteeId, taskId, request);
         return ResponseEntity.ok(response);
+    }
+
+    @GetMapping("/study-status")
+    @Operation(summary = "기간/과목별 학습 현황 조회", description = "기간 내 과목별 과제 달성률을 조회합니다. 전체 달성률과 과목별 달성률을 함께 반환합니다.")
+    public ResponseEntity<StudyStatusResponse> getStudyStatus(
+            @PathVariable int menteeId,
+            @Parameter(description = "조회 시작일 (yyyy-MM-dd)")
+            @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate startDate,
+            @Parameter(description = "조회 종료일 (yyyy-MM-dd)")
+            @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate endDate
+    ) {
+        StudyStatusResponse studyStatus = commonTaskService.getStudyStatus(menteeId, startDate, endDate);
+        return ResponseEntity.ok(studyStatus);
     }
 }

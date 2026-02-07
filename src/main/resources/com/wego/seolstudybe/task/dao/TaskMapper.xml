@@ -136,4 +136,18 @@
         ORDER BY A.started_at
     </select>
 
+    <!-- 기간/과목별 학습 현황 조회 -->
+    <select id="findStudyStatusByMenteeIdAndDateRange"
+            resultType="com.wego.seolstudybe.task.dto.response.SubjectStudyStatusResponse">
+        SELECT
+            A.subject,
+            COUNT(*) AS totalTaskCount,
+            SUM(CASE WHEN A.is_checked = true THEN 1 ELSE 0 END) AS completedTaskCount
+        FROM task A
+        WHERE A.mentee_id = #{menteeId}
+          AND A.date BETWEEN #{startDate} AND #{endDate}
+        GROUP BY A.subject
+        ORDER BY A.subject
+    </select>
+
 </mapper>

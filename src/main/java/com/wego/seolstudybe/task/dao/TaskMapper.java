@@ -41,4 +41,10 @@ public interface TaskMapper {
             @Param("menteeId") int menteeId,
             @Param("date") LocalDate date
     );
+
+    List<SubjectStudyStatusResponse> findStudyStatusByMenteeIdAndDateRange(
+            @Param("menteeId") int menteeId,
+            @Param("startDate") LocalDate startDate,
+            @Param("endDate") LocalDate endDate
+    );
 }
