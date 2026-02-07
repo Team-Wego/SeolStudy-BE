@@ -1,5 +1,7 @@
 package com.wego.seolstudybe.mentoring.service;
 
+import com.wego.seolstudybe.common.error.ErrorCode;
+import com.wego.seolstudybe.common.error.exception.BusinessException;
 import com.wego.seolstudybe.common.service.S3Service;
 import com.wego.seolstudybe.member.entity.Member;
 import com.wego.seolstudybe.member.entity.enums.Role;
@@ -112,12 +114,38 @@ public class FeedbackServiceImpl implements FeedbackService {
     @Transactional(readOnly = true)
     @Override
     public List<DailyFeedbackCountResponse> getDailyFeedbackCount(final int memberId, final int menteeId,
-                                                                   final LocalDate startDate, final LocalDate endDate) {
+                                                                  final LocalDate startDate, final LocalDate endDate) {
         final Member member = findMemberById(memberId);
 
         validateMenteeAccess(member, menteeId);
 
         return feedbackRepository.countDailyByMenteeIdAndTargetDateBetween(menteeId, startDate, endDate);
+    }
+
+    @Transactional(readOnly = true)
+    @Override
+    public FeedbackResponse getPlannerFeedback(final int memberId, final Integer menteeId, final LocalDate date) {
+        final Member member = findMemberById(memberId);
+
+        if (member.getRole().equals(Role.MENTOR) & menteeId == null) {
+            // TODO 커스텀 에러로 변경
+            throw new BusinessException(ErrorCode.BAD_REQUEST, "멘토는 멘티의 ID(PK) 값을 지정해야 합니다.");
+        }
+
+        validateMenteeAccess(member, menteeId);
+
+        final Feedback feedback = feedbackRepository.findByTargetDateAndMenteeId(date, menteeId);
+
+        if (feedback == null) {
+            return null;
+        }
+
+        final List<FeedbackImageResponse> feedbackImages = feedbackImageRepository.findByFeedbackId(feedback.getId())
+                    .stream()
+                    .map(FeedbackImageResponse::of)
+                    .collect(Collectors.toList());
+
+        return FeedbackResponse.of(feedback, feedbackImages);
     }
 
     private void validateMenteeAccess(final Member member, final int menteeId) {

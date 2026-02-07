@@ -65,4 +65,14 @@ public class FeedbackController {
 
         return ResponseEntity.ok(response);
     }
+
+    @Operation(summary = "플래너 피드백 조회")
+    @GetMapping("/feedback/planner")
+    public ResponseEntity<FeedbackResponse> getPlannerFeedback(@CookieValue("memberId") final int memberId,
+                                                               @RequestParam(value = "menteeId", required = false) final Integer menteeId,
+                                                               @RequestParam("date") final LocalDate date) {
+        final FeedbackResponse response = feedbackService.getPlannerFeedback(memberId, menteeId, date);
+
+        return ResponseEntity.ok(response);
+    }
 }
