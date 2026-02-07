@@ -92,12 +92,14 @@ public class ChatRoomService {
      * ChatRoom → ChatRoomResponseDTO 변환 (멘토/멘티 이름 포함)
      */
     private ChatRoomResponseDTO toResponseWithNames(ChatRoom chatRoom) {
-        String mentorName = memberRepository.findById(chatRoom.getMentorId().intValue())
-                .map(Member::getName)
-                .orElse("멘토");
-        String menteeName = memberRepository.findById(chatRoom.getMenteeId().intValue())
-                .map(Member::getName)
-                .orElse("멘티");
-        return ChatRoomResponseDTO.from(chatRoom, mentorName, menteeName);
+        Optional<Member> mentor = memberRepository.findById(chatRoom.getMentorId().intValue());
+        Optional<Member> mentee = memberRepository.findById(chatRoom.getMenteeId().intValue());
+
+        String mentorName = mentor.map(Member::getName).orElse("멘토");
+        String menteeName = mentee.map(Member::getName).orElse("멘티");
+        String mentorProfileUrl = mentor.map(Member::getProfileUrl).orElse(null);
+        String menteeProfileUrl = mentee.map(Member::getProfileUrl).orElse(null);
+
+        return ChatRoomResponseDTO.from(chatRoom, mentorName, menteeName, mentorProfileUrl, menteeProfileUrl);
     }
 }

@@ -15,6 +15,8 @@ public class ChatRoomResponseDTO {
     private Long menteeId;
     private String mentorName;
     private String menteeName;
+    private String mentorProfileUrl;
+    private String menteeProfileUrl;
     private String lastMessage;
     private Long lastSenderId;
     private LocalDateTime lastMessageAt;
@@ -36,13 +38,16 @@ public class ChatRoomResponseDTO {
                 .build();
     }
 
-    public static ChatRoomResponseDTO from(ChatRoom chatRoom, String mentorName, String menteeName) {
+    public static ChatRoomResponseDTO from(ChatRoom chatRoom, String mentorName, String menteeName,
+                                              String mentorProfileUrl, String menteeProfileUrl) {
         return ChatRoomResponseDTO.builder()
                 .roomId(chatRoom.getId())
                 .mentorId(chatRoom.getMentorId())
                 .menteeId(chatRoom.getMenteeId())
                 .mentorName(mentorName)
                 .menteeName(menteeName)
+                .mentorProfileUrl(mentorProfileUrl)
+                .menteeProfileUrl(menteeProfileUrl)
                 .lastMessage(chatRoom.getLastMessage())
                 .lastSenderId(chatRoom.getLastSenderId())
                 .lastMessageAt(chatRoom.getLastMessageAt())
