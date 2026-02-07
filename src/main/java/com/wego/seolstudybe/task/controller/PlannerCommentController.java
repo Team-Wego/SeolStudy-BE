@@ -2,7 +2,7 @@ package com.wego.seolstudybe.task.controller;
 
 import com.wego.seolstudybe.task.dto.request.PlannerCommentCreateRequest;
 import com.wego.seolstudybe.task.dto.request.PlannerCommentUpdateRequest;
-import com.wego.seolstudybe.task.dto.response.PlannerCommentResponseDTO;
+import com.wego.seolstudybe.task.dto.response.PlannerCommentResponse;
 import com.wego.seolstudybe.task.service.PlannerCommentService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -22,22 +22,22 @@ public class PlannerCommentController {
 
     @PostMapping
     @Operation(summary = "플래너 코멘트 등록", description = "특정 날짜의 플래너에 코멘트를 등록합니다.")
-    public ResponseEntity<PlannerCommentResponseDTO> createPlannerComment(
+    public ResponseEntity<PlannerCommentResponse> createPlannerComment(
             @PathVariable("menteeId") int menteeId,
             @Valid @RequestBody PlannerCommentCreateRequest request
     ) {
-        PlannerCommentResponseDTO response = plannerCommentService.createPlannerComment(menteeId, request);
+        PlannerCommentResponse response = plannerCommentService.createPlannerComment(menteeId, request);
         return ResponseEntity.status(HttpStatus.CREATED).body(response);
     }
 
     @PutMapping("/{plannerId}")
     @Operation(summary = "플래너 코멘트 수정", description = "플래너 코멘트를 수정합니다.")
-    public ResponseEntity<PlannerCommentResponseDTO> updatePlannerComment(
+    public ResponseEntity<PlannerCommentResponse> updatePlannerComment(
             @PathVariable("menteeId") int menteeId,
             @PathVariable("plannerId") int plannerId,
             @Valid @RequestBody PlannerCommentUpdateRequest request
     ) {
-        PlannerCommentResponseDTO response = plannerCommentService.updatePlannerComment(menteeId, plannerId, request);
+        PlannerCommentResponse response = plannerCommentService.updatePlannerComment(menteeId, plannerId, request);
         return ResponseEntity.ok(response);
     }
 

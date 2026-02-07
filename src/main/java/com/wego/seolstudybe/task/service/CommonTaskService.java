@@ -13,7 +13,7 @@ public interface CommonTaskService {
 
     TaskDetailResponse getTaskDetail(int taskId);
 
-    PlannerCommentResponse getPlannerComment(int menteeId, LocalDate date);
+    GetPlannerCommentDto getPlannerComment(int menteeId, LocalDate date);
 
     DailyStudyTimeResponse getStudyTime(int menteeId, LocalDate date);
 }
