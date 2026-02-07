@@ -55,12 +55,12 @@ public class CommonTaskController {
 
     @GetMapping("/mentees/{menteeId}/planner/comments")
     @Operation(summary = "플래너 코멘트 조회", description = "특정 날짜의 플래너 코멘트를 조회합니다.")
-    public ResponseEntity<PlannerCommentResponse> getPlannerComment(
+    public ResponseEntity<GetPlannerCommentDto> getPlannerComment(
             @PathVariable int menteeId,
             @Parameter(description = "조회 날짜 (yyyy-MM-dd)")
             @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate date
     ) {
-        PlannerCommentResponse comment = commonTaskService.getPlannerComment(menteeId, date);
+        GetPlannerCommentDto comment = commonTaskService.getPlannerComment(menteeId, date);
         return ResponseEntity.ok(comment);
     }
 

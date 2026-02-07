@@ -20,4 +20,10 @@ public interface TaskRepository extends JpaRepository<Task, Integer> {
     int findMaxSequenceByMenteeIdAndDate(@Param("menteeId") int menteeId, @Param("date") LocalDate date);
 
     List<Task> findByMenteeIdAndDateOrderBySequenceAsc(int menteeId, LocalDate date);
+
+    int countByMenteeIdAndDateAndType(int menteeId, LocalDate date, TaskType type);
+
+    int countByMenteeIdAndDateAndTypeAndSubmittedAtIsNotNull(int menteeId, LocalDate date, TaskType type);
+
+    List<Task> findTop10ByMenteeIdInAndHasFeedbackFalseAndSubmittedAtIsNotNullOrderBySubmittedAtAsc(List<Integer> menteeIds);
 }
