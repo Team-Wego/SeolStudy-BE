@@ -27,11 +27,14 @@ public class PlannerCommentServiceImpl implements PlannerCommentService {
         Member mentee = memberRepository.findById(menteeId)
                 .orElseThrow(MemberNotFoundException::new);
 
-        Planner planner = Planner.builder()
-                .mentee(mentee)
-                .date(request.getDate())
-                .comment(request.getComment())
-                .build();
+        Planner planner = plannerRepository.findByMenteeIdAndDate(menteeId, request.getDate())
+                .orElseGet(() -> Planner.builder()
+                        .mentee(mentee)
+                        .date(request.getDate())
+                        .comment(request.getComment())
+                        .build());
+
+        planner.updateComment(request.getComment());
 
         Planner savedPlanner = plannerRepository.save(planner);
         return PlannerCommentResponse.from(savedPlanner);
