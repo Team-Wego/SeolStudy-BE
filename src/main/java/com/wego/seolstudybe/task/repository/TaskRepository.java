@@ -29,4 +29,7 @@ public interface TaskRepository extends JpaRepository<Task, Integer> {
 
     List<Task> findTop10ByMenteeIdInAndHasFeedbackFalseAndSubmittedAtIsNotNullOrderBySubmittedAtAsc(List<Integer> menteeIds);
 
+    int countByMenteeIdInAndHasFeedbackFalseAndSubmittedAtIsNotNullAndType(final List<Integer> menteeIds,
+                                                                           final TaskType type);
+
 }
