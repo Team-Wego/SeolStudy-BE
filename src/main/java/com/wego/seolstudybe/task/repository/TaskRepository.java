@@ -26,4 +26,7 @@ public interface TaskRepository extends JpaRepository<Task, Integer> {
     int countByMenteeIdAndDateAndTypeAndSubmittedAtIsNotNull(int menteeId, LocalDate date, TaskType type);
 
     List<Task> findTop10ByMenteeIdInAndHasFeedbackFalseAndSubmittedAtIsNotNullOrderBySubmittedAtAsc(List<Integer> menteeIds);
+
+    int countByMenteeIdInAndHasFeedbackFalseAndSubmittedAtIsNotNullAndType(final List<Integer> menteeIds,
+                                                                           final TaskType type);
 }
