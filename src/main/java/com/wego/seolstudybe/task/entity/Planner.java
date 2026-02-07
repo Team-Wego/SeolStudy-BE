@@ -4,6 +4,7 @@ import com.wego.seolstudybe.member.entity.Member;
 import jakarta.persistence.*;
 import lombok.*;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 
 @Entity
 @Table(name = "planner", uniqueConstraints = {
@@ -28,4 +29,11 @@ public class Planner {
 
     @Column(nullable = false, length = 2000)
     private String comment;
+
+    @Column(name = "completed_at")
+    private LocalDateTime completedAt;
+
+    public void updateComment(String comment) {
+        this.comment = comment;
+    }
 }

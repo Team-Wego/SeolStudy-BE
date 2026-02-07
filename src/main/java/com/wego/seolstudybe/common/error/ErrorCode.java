@@ -41,7 +41,10 @@ public enum ErrorCode {
 
     /* WORKSHEET */
     WORKSHEET_NOT_FOUND(HttpStatus.NOT_FOUND, "WORKSHEET001", "학습지가 존재하지 않습니다."),
-    WORKSHEET_NOT_OWNED(HttpStatus.FORBIDDEN, "WORKSHEET002", "멘티 소유의 학습지가 아닙니다.");
+    WORKSHEET_NOT_OWNED(HttpStatus.FORBIDDEN, "WORKSHEET002", "멘티 소유의 학습지가 아닙니다."),
+
+    /* PLANNER */
+    PLANNER_NOT_FOUND(HttpStatus.NOT_FOUND, "PLANNER001", "플래너를 찾을 수 없습니다.");
 
     private final HttpStatus status;
     private final String code;
