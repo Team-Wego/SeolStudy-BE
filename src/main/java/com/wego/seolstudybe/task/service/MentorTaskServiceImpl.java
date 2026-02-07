@@ -11,12 +11,15 @@ import com.wego.seolstudybe.mentoring.exception.WorksheetNotFoundException;
 import com.wego.seolstudybe.mentoring.exception.WorksheetNotOwnedException;
 import com.wego.seolstudybe.mentoring.repository.GoalRepository;
 import com.wego.seolstudybe.mentoring.repository.WorksheetFileRepository;
-import com.wego.seolstudybe.task.dto.CreateTaskRequest;
-import com.wego.seolstudybe.task.dto.CreateTaskResponse;
-import com.wego.seolstudybe.task.dto.TaskResponse;
-import com.wego.seolstudybe.task.dto.UpdateTaskRequest;
+import com.wego.seolstudybe.task.dto.request.CreateTaskRequest;
+import com.wego.seolstudybe.task.dto.request.UpdateTaskRequest;
+import com.wego.seolstudybe.task.dto.response.CreateTaskResponse;
+import com.wego.seolstudybe.task.dto.response.MenteeSubmissionSummaryResponse;
+import com.wego.seolstudybe.task.dto.response.PendingFeedbackResponse;
+import com.wego.seolstudybe.task.dto.response.UpdateTaskResponse;
 import com.wego.seolstudybe.task.entity.Task;
 import com.wego.seolstudybe.task.entity.TaskWorksheet;
+import com.wego.seolstudybe.task.entity.enums.TaskType;
 import com.wego.seolstudybe.task.exception.TaskNotFoundException;
 import com.wego.seolstudybe.task.repository.TaskRepository;
 import com.wego.seolstudybe.task.repository.TaskWorksheetRepository;
@@ -24,6 +27,7 @@ import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDate;
 import java.util.List;
 
 @Service
@@ -72,7 +76,7 @@ public class MentorTaskServiceImpl implements MentorTaskService{
 
     @Override
     @Transactional
-    public TaskResponse updateTask(
+    public UpdateTaskResponse updateTask(
             int mentorId,
             int taskId,
             UpdateTaskRequest request
@@ -95,7 +99,7 @@ public class MentorTaskServiceImpl implements MentorTaskService{
 
         replaceTaskWorksheets(task, mentee, request.getWorksheetFileIds());
 
-        return new TaskResponse(
+        return new UpdateTaskResponse(
                 task.getId(),
                 mentee.getId(),
                 task.getTitle(),
@@ -116,6 +120,51 @@ public class MentorTaskServiceImpl implements MentorTaskService{
 
         taskWorksheetRepository.deleteByTask(task);
         taskRepository.delete(task);
+    }
+
+    @Override
+    public List<MenteeSubmissionSummaryResponse> getSubmissionSummary(int mentorId) {
+        List<Member> mentees = memberRepository.findByMentorId(mentorId);
+        LocalDate today = LocalDate.now();
+
+        return mentees.stream()
+                .map(mentee -> {
+                    int assignedCount = taskRepository.countByMenteeIdAndDateAndType(
+                            mentee.getId(), today, TaskType.ASSIGNMENT);
+                    int submittedCount = taskRepository.countByMenteeIdAndDateAndTypeAndSubmittedAtIsNotNull(
+                            mentee.getId(), today, TaskType.ASSIGNMENT);
+
+                    return new MenteeSubmissionSummaryResponse(
+                            mentee.getId(),
+                            mentee.getName(),
+                            assignedCount,
+                            submittedCount
+                    );
+                })
+                .toList();
+    }
+
+    @Override
+    public List<PendingFeedbackResponse> getPendingFeedbacks(int mentorId) {
+        List<Member> mentees = memberRepository.findByMentorId(mentorId);
+        List<Integer> menteeIds = mentees.stream()
+                .map(Member::getId)
+                .toList();
+
+        List<Task> tasks = taskRepository
+                .findTop10ByMenteeIdInAndHasFeedbackFalseAndSubmittedAtIsNotNullOrderBySubmittedAtAsc(menteeIds);
+
+        return tasks.stream()
+                .map(task -> new PendingFeedbackResponse(
+                        task.getId(),
+                        task.getTitle(),
+                        task.getComment(),
+                        task.getSubmittedAt(),
+                        task.getMentee().getName(),
+                        task.getType(),
+                        task.getSubject()
+                ))
+                .toList();
     }
 
 

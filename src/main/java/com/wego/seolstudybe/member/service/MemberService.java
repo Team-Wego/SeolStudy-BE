@@ -2,7 +2,10 @@ package com.wego.seolstudybe.member.service;
 
 import com.wego.seolstudybe.member.dto.LoginRequest;
 import com.wego.seolstudybe.member.dto.LoginResponse;
+import com.wego.seolstudybe.member.dto.MemberResponse;
+import com.wego.seolstudybe.member.dto.UpdateMemberRequest;
 import com.wego.seolstudybe.member.entity.Member;
+import com.wego.seolstudybe.member.entity.enums.Role;
 import com.wego.seolstudybe.member.exception.InvalidPasswordException;
 import com.wego.seolstudybe.member.exception.MemberNotFoundException;
 import com.wego.seolstudybe.member.repository.MemberRepository;
@@ -29,5 +32,27 @@ public class MemberService {
 
         // 3. 로그인 성공 - 응답 반환
         return new LoginResponse(member);
+    }
+
+    @Transactional(readOnly = true)
+    public MemberResponse getMember(int id) {
+        Member member = memberRepository.findById(id)
+                .orElseThrow(MemberNotFoundException::new);
+        return new MemberResponse(member);
+    }
+
+    @Transactional
+    public MemberResponse updateMember(int id, UpdateMemberRequest request) {
+        Member member = memberRepository.findById(id)
+                .orElseThrow(MemberNotFoundException::new);
+
+        member.update(
+                request.getProfileUrl(),
+                request.getName(),
+                request.getGrade(),
+                request.getGoalUniversity()
+        );
+
+        return new MemberResponse(member);
     }
 }

@@ -57,4 +57,10 @@ public class Member {
     @Column(name = "recent_score")
     private String recentScore;
 
+    public void update(String profileUrl, String name, Grade grade, String goalUniversity) {
+        this.profileUrl = profileUrl;
+        this.name = name;
+        this.grade = grade;
+        this.goalUniversity = goalUniversity;
+    }
 }

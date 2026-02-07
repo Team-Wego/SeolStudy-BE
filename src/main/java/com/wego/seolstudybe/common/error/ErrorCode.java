@@ -34,6 +34,7 @@ public enum ErrorCode {
     /* GOAL */
     GOAL_NOT_FOUND(HttpStatus.NOT_FOUND, "GOAL001", "목표 데이터를 찾을 수 없습니다."),
     GOAL_ACCESS_DENIED(HttpStatus.FORBIDDEN, "GOAL002", "목표 데이터를 수정/삭제 권한이 없습니다."),
+    GOAL_MENTEE_ID_REQUIRED(HttpStatus.BAD_REQUEST, "GOAL003", "멘토는 멘티 ID를 지정해야 합니다."),
 
     /* TASK */
     TASK_NOT_FOUND(HttpStatus.NOT_FOUND, "TASK001", "과제가 존재하지 않습니다."),
@@ -44,7 +45,10 @@ public enum ErrorCode {
     WORKSHEET_NOT_OWNED(HttpStatus.FORBIDDEN, "WORKSHEET002", "멘티 소유의 학습지가 아닙니다."),
 
     /* PLANNER */
-    PLANNER_NOT_FOUND(HttpStatus.NOT_FOUND, "PLANNER001", "플래너를 찾을 수 없습니다.");
+    PLANNER_NOT_FOUND(HttpStatus.NOT_FOUND, "PLANNER001", "플래너를 찾을 수 없습니다."),
+
+    /* STUDY_TIME */
+    STUDY_TIME_NOT_FOUND(HttpStatus.NOT_FOUND, "STUDY_TIME001", "공부 시간이 존재하지 않습니다.");
 
     private final HttpStatus status;
     private final String code;

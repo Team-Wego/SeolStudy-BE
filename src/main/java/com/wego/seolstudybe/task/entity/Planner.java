@@ -36,4 +36,5 @@ public class Planner {
     public void updateComment(String comment) {
         this.comment = comment;
     }
+
 }
