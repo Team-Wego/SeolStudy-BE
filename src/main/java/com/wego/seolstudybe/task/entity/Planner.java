@@ -32,4 +32,9 @@ public class Planner {
 
     @Column(name = "completed_at")
     private LocalDateTime completedAt;
+
+    public void updateComment(String comment) {
+        this.comment = comment;
+    }
+
 }

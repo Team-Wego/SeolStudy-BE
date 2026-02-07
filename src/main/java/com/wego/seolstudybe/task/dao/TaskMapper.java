@@ -27,7 +27,7 @@ public interface TaskMapper {
 
     List<TaskImageDto> findImagesByTaskId(@Param("taskId") int taskId);
 
-    PlannerCommentResponse findPlannerCommentByMenteeIdAndDate(
+    GetPlannerCommentDto findPlannerCommentByMenteeIdAndDate(
             @Param("menteeId") int menteeId,
             @Param("date") LocalDate date
     );

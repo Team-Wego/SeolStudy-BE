@@ -97,7 +97,7 @@
 
     <!-- 플래너 코멘트 조회 -->
     <select id="findPlannerCommentByMenteeIdAndDate"
-            resultType="com.wego.seolstudybe.task.dto.response.PlannerCommentResponse">
+            resultType="com.wego.seolstudybe.task.dto.response.GetPlannerCommentDto">
         SELECT
             A.id,
             A.date,
