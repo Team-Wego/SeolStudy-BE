@@ -16,6 +16,7 @@ import com.wego.seolstudybe.mentoring.entity.Feedback;
 import com.wego.seolstudybe.mentoring.entity.FeedbackImage;
 import com.wego.seolstudybe.mentoring.entity.enums.FeedbackType;
 import com.wego.seolstudybe.mentoring.exception.FeedbackAccessDeniedException;
+import com.wego.seolstudybe.mentoring.exception.FeedbackAlreadyExistException;
 import com.wego.seolstudybe.mentoring.exception.FeedbackNotFoundException;
 import com.wego.seolstudybe.mentoring.exception.TaskIdRequiredException;
 import com.wego.seolstudybe.mentoring.repository.FeedbackImageRepository;
@@ -57,7 +58,16 @@ public class FeedbackServiceImpl implements FeedbackService {
 
         final Member mentee = findMemberById(request.getMenteeId());
 
+        if (feedbackRepository.existsByMenteeIdAndTargetDateAndType(request.getMenteeId(), request.getTargetDate(),
+                request.getType())) {
+            throw new FeedbackAlreadyExistException();
+        }
+
         final Task task = findTaskById(request.getTaskId());
+
+        if (request.getTaskId() != null) {
+            task.updateFeedbackStatus(true);
+        }
 
         Feedback feedback = Feedback.builder()
                 .mentor(mentor)
@@ -141,9 +151,9 @@ public class FeedbackServiceImpl implements FeedbackService {
         }
 
         final List<FeedbackImageResponse> feedbackImages = feedbackImageRepository.findByFeedbackId(feedback.getId())
-                    .stream()
-                    .map(FeedbackImageResponse::of)
-                    .collect(Collectors.toList());
+                .stream()
+                .map(FeedbackImageResponse::of)
+                .collect(Collectors.toList());
 
         return FeedbackResponse.of(feedback, feedbackImages);
     }

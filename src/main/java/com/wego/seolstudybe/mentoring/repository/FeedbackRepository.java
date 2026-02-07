@@ -24,4 +24,6 @@ public interface FeedbackRepository extends JpaRepository<Feedback, Integer> {
             @Param("endDate") final LocalDate endDate);
 
     Feedback findByTargetDateAndMenteeId(final LocalDate targetDate, final int menteeId);
+
+    boolean existsByMenteeIdAndTargetDateAndType(final int menteeId, final LocalDate targetDate, final FeedbackType type);
 }
