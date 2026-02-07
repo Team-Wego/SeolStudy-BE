@@ -1,4 +1,4 @@
-package com.wego.seolstudybe.task.dto;
+package com.wego.seolstudybe.task.dto.request;
 
 import com.wego.seolstudybe.mentoring.entity.enums.Subject;
 import com.wego.seolstudybe.task.entity.enums.TaskType;
@@ -12,7 +12,7 @@ import java.util.List;
 
 @Getter
 @NoArgsConstructor
-public class UpdateTaskRequest {
+public class CreateTaskRequest {
 
     @NotBlank
     private String title;
@@ -20,13 +20,13 @@ public class UpdateTaskRequest {
     private String description;
 
     @NotNull
-    private TaskType type;
+    private TaskType type; // TODO, ASSIGNMENT
 
     @NotNull
     private LocalDate date;
 
     @NotNull
-    private Subject subject;
+    private Subject subject; // KOR, ENG, MATH
 
     private Integer goalId;
 

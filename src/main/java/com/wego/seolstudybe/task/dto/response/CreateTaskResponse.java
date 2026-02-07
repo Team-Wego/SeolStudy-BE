@@ -1,4 +1,4 @@
-package com.wego.seolstudybe.task.dto;
+package com.wego.seolstudybe.task.dto.response;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;

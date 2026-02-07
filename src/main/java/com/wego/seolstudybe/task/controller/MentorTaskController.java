@@ -1,9 +1,9 @@
 package com.wego.seolstudybe.task.controller;
 
-import com.wego.seolstudybe.task.dto.CreateTaskRequest;
-import com.wego.seolstudybe.task.dto.CreateTaskResponse;
-import com.wego.seolstudybe.task.dto.TaskResponse;
-import com.wego.seolstudybe.task.dto.UpdateTaskRequest;
+import com.wego.seolstudybe.task.dto.request.CreateTaskRequest;
+import com.wego.seolstudybe.task.dto.response.CreateTaskResponse;
+import com.wego.seolstudybe.task.dto.response.UpdateTaskResponse;
+import com.wego.seolstudybe.task.dto.request.UpdateTaskRequest;
 import com.wego.seolstudybe.task.service.MentorTaskService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -13,7 +13,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-@RequestMapping("/mentor")
+@RequestMapping("/mentors")
 @RestController
 @RequiredArgsConstructor
 @Tag(name = "Mentor Task", description = "멘토 과제 관리 API")
@@ -45,11 +45,11 @@ public class MentorTaskController {
             description = "멘토가 담당 멘티의 과제를 수정합니다."
     )
     @PutMapping("/tasks/{taskId}")
-    public ResponseEntity<TaskResponse> updateTask(
+    public ResponseEntity<UpdateTaskResponse> updateTask(
             @PathVariable("taskId") int taskId,
             @RequestBody @Valid UpdateTaskRequest request
     ) {
-        TaskResponse response =
+        UpdateTaskResponse response =
                 mentorTaskService.updateTask(TEMP_MENTOR_ID, taskId, request);
 
         return ResponseEntity.ok(response);

@@ -11,10 +11,10 @@ import com.wego.seolstudybe.mentoring.exception.WorksheetNotFoundException;
 import com.wego.seolstudybe.mentoring.exception.WorksheetNotOwnedException;
 import com.wego.seolstudybe.mentoring.repository.GoalRepository;
 import com.wego.seolstudybe.mentoring.repository.WorksheetFileRepository;
-import com.wego.seolstudybe.task.dto.CreateTaskRequest;
-import com.wego.seolstudybe.task.dto.CreateTaskResponse;
-import com.wego.seolstudybe.task.dto.TaskResponse;
-import com.wego.seolstudybe.task.dto.UpdateTaskRequest;
+import com.wego.seolstudybe.task.dto.request.CreateTaskRequest;
+import com.wego.seolstudybe.task.dto.response.CreateTaskResponse;
+import com.wego.seolstudybe.task.dto.response.UpdateTaskResponse;
+import com.wego.seolstudybe.task.dto.request.UpdateTaskRequest;
 import com.wego.seolstudybe.task.entity.Task;
 import com.wego.seolstudybe.task.entity.TaskWorksheet;
 import com.wego.seolstudybe.task.exception.TaskNotFoundException;
@@ -72,7 +72,7 @@ public class MentorTaskServiceImpl implements MentorTaskService{
 
     @Override
     @Transactional
-    public TaskResponse updateTask(
+    public UpdateTaskResponse updateTask(
             int mentorId,
             int taskId,
             UpdateTaskRequest request
@@ -95,7 +95,7 @@ public class MentorTaskServiceImpl implements MentorTaskService{
 
         replaceTaskWorksheets(task, mentee, request.getWorksheetFileIds());
 
-        return new TaskResponse(
+        return new UpdateTaskResponse(
                 task.getId(),
                 mentee.getId(),
                 task.getTitle(),
