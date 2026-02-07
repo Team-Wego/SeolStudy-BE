@@ -1,5 +1,6 @@
 package com.wego.seolstudybe.task.dao;
 
+import com.wego.seolstudybe.mentoring.entity.enums.Subject;
 import com.wego.seolstudybe.task.dto.response.*;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
@@ -40,5 +41,12 @@ public interface TaskMapper {
     List<StudyTimeDetailDto> findStudyTimeDetailsByMenteeIdAndDate(
             @Param("menteeId") int menteeId,
             @Param("date") LocalDate date
+    );
+
+    List<SubjectStudyStatusResponse> findStudyStatusByMenteeIdAndDateRange(
+            @Param("menteeId") int menteeId,
+            @Param("startDate") LocalDate startDate,
+            @Param("endDate") LocalDate endDate,
+            @Param("subject") Subject subject
     );
 }

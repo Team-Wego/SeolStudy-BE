@@ -1,5 +1,6 @@
 package com.wego.seolstudybe.task.service;
 
+import com.wego.seolstudybe.mentoring.entity.enums.Subject;
 import com.wego.seolstudybe.task.dto.response.*;
 import com.wego.seolstudybe.task.exception.TaskNotFoundException;
 import com.wego.seolstudybe.task.dao.TaskMapper;
@@ -66,5 +67,13 @@ public class CommonTaskServiceImpl implements CommonTaskService {
             response.setStudyTimes(studyTimeDetails != null ? studyTimeDetails : Collections.emptyList());
         }
         return response;
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public StudyStatusResponse getStudyStatus(int menteeId, LocalDate startDate, LocalDate endDate, Subject subject) {
+        List<SubjectStudyStatusResponse> subjects = taskMapper.findStudyStatusByMenteeIdAndDateRange(
+                menteeId, startDate, endDate, subject);
+        return StudyStatusResponse.from(subjects != null ? subjects : Collections.emptyList());
     }
 }
