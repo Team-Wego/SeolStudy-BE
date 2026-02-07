@@ -73,6 +73,10 @@ public class Task {
     @Column(name = "created_at", nullable = false, updatable = false)
     private LocalDateTime createdAt;
 
+    public void updateFeedbackStatus( final boolean status) {
+        this.hasFeedback = status;
+    }
+
     public void updateContent(String title, Subject subject) {
         this.title = title;
         this.subject = subject;
