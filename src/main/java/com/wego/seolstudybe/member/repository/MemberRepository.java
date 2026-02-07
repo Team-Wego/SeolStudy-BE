@@ -9,5 +9,7 @@ import java.util.Optional;
 public interface MemberRepository extends JpaRepository<Member, Integer> {
     Optional<Member> findByEmail(String email);
 
-    List<Member> findByMentorId(int mentorId);
+    List<Member> findByMentorId(final int mentorId);
+
+    int countByMentorIdAndEndedAtIsNull(final int mentorId);
 }
