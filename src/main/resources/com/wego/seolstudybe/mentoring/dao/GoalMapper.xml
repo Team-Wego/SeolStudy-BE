@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.wego.seolstudybe.mentoring.dao.GoalMapper">
+    <resultMap id="goalResponseResultMap" type="com.wego.seolstudybe.mentoring.dto.GoalResponse">
+        <id column="goal_id" property="goalId"/>
+        <result column="goal_name" property="name"/>
+        <result column="creator_id" property="creatorId"/>
+        <result column="goal_subject" property="subject"/>
+
+        <collection property="worksheetFiles" ofType="com.wego.seolstudybe.mentoring.dto.WorksheetFileResponse">
+            <id column="worksheet_id" property="worksheetId"/>
+            <result column="worksheet_name" property="name"/>
+            <result column="url" property="url"/>
+            <result column="size" property="size"/>
+            <result column="type" property="type"/>
+            <result column="worksheet_subject" property="subject"/>
+        </collection>
+    </resultMap>
+
+    <select id="findGoalsByCreatedBy" resultMap="goalResponseResultMap">
+        SELECT
+               A.id AS goal_id
+             , A.name AS goal_name
+             , A.creator_id AS creator_id
+             , A.subject AS goal_subject
+             , B.id AS worksheet_id
+             , B.name AS worksheet_name
+             , B.url AS url
+             , B.size AS size
+             , B.type AS type
+             , B.subject AS worksheet_subject
+          FROM goal AS A
+          LEFT JOIN worksheet_file AS B
+            ON A.worksheet_id = B.id
+         WHERE A.deleted_at IS NULL AND A.target_mentee_id = #{menteeId}
+        <if test="createdBy.name() == 'MENTOR'">
+            AND A.creator_id != #{menteeId}
+        </if>
+        <if test="createdBy.name() == 'MENTEE'">
+            AND A.creator_id = #{menteeId}
+        </if>
+    </select>
+
+</mapper>
