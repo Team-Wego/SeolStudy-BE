@@ -45,6 +45,9 @@ public enum ErrorCode {
     WORKSHEET_NOT_FOUND(HttpStatus.NOT_FOUND, "WORKSHEET001", "학습지가 존재하지 않습니다."),
     WORKSHEET_NOT_OWNED(HttpStatus.FORBIDDEN, "WORKSHEET002", "멘티 소유의 학습지가 아닙니다."),
 
+    /* PLANNER */
+    PLANNER_NOT_FOUND(HttpStatus.NOT_FOUND, "PLANNER001", "플래너를 찾을 수 없습니다."),
+
     /* STUDY_TIME */
     STUDY_TIME_NOT_FOUND(HttpStatus.NOT_FOUND, "STUDY_TIME001", "공부 시간이 존재하지 않습니다.");
 

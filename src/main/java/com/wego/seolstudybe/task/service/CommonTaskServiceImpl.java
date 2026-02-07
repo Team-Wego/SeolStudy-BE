@@ -48,7 +48,7 @@ public class CommonTaskServiceImpl implements CommonTaskService {
 
     @Override
     @Transactional(readOnly = true)
-    public PlannerCommentResponse getPlannerComment(int menteeId, LocalDate date) {
+    public GetPlannerCommentDto getPlannerComment(int menteeId, LocalDate date) {
         return taskMapper.findPlannerCommentByMenteeIdAndDate(menteeId, date);
     }
 
