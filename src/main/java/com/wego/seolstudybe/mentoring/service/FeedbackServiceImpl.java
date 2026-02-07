@@ -137,7 +137,7 @@ public class FeedbackServiceImpl implements FeedbackService {
     public FeedbackResponse getPlannerFeedback(final int memberId, final Integer menteeId, final LocalDate date) {
         final Member member = findMemberById(memberId);
 
-        if (member.getRole().equals(Role.MENTOR) & menteeId == null) {
+        if (member.getRole().equals(Role.MENTOR) && menteeId == null) {
             // TODO 커스텀 에러로 변경
             throw new BusinessException(ErrorCode.BAD_REQUEST, "멘토는 멘티의 ID(PK) 값을 지정해야 합니다.");
         }
