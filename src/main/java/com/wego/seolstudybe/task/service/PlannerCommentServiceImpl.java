@@ -5,7 +5,7 @@ import com.wego.seolstudybe.member.exception.MemberNotFoundException;
 import com.wego.seolstudybe.member.repository.MemberRepository;
 import com.wego.seolstudybe.task.dto.request.PlannerCommentCreateRequest;
 import com.wego.seolstudybe.task.dto.request.PlannerCommentUpdateRequest;
-import com.wego.seolstudybe.task.dto.response.PlannerCommentResponse;
+import com.wego.seolstudybe.task.dto.response.PlannerCommentResponseDTO;
 import com.wego.seolstudybe.task.entity.Planner;
 import com.wego.seolstudybe.task.exception.PlannerNotFoundException;
 import com.wego.seolstudybe.task.repository.PlannerRepository;
@@ -23,7 +23,7 @@ public class PlannerCommentServiceImpl implements PlannerCommentService {
 
     @Override
     @Transactional
-    public PlannerCommentResponse createPlannerComment(int menteeId, PlannerCommentCreateRequest request) {
+    public PlannerCommentResponseDTO createPlannerComment(int menteeId, PlannerCommentCreateRequest request) {
         Member mentee = memberRepository.findById(menteeId)
                 .orElseThrow(MemberNotFoundException::new);
 
@@ -37,17 +37,17 @@ public class PlannerCommentServiceImpl implements PlannerCommentService {
         planner.updateComment(request.getComment());
 
         Planner savedPlanner = plannerRepository.save(planner);
-        return PlannerCommentResponse.from(savedPlanner);
+        return PlannerCommentResponseDTO.from(savedPlanner);
     }
 
     @Override
     @Transactional
-    public PlannerCommentResponse updatePlannerComment(int menteeId, int plannerId, PlannerCommentUpdateRequest request) {
+    public PlannerCommentResponseDTO updatePlannerComment(int menteeId, int plannerId, PlannerCommentUpdateRequest request) {
         Planner planner = plannerRepository.findByIdAndMenteeId(plannerId, menteeId)
                 .orElseThrow(PlannerNotFoundException::new);
 
         planner.updateComment(request.getComment());
-        return PlannerCommentResponse.from(planner);
+        return PlannerCommentResponseDTO.from(planner);
     }
 
     @Override

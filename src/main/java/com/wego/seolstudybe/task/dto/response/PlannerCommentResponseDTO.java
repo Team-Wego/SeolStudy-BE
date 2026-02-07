@@ -9,7 +9,7 @@ import java.time.LocalDateTime;
 
 @Getter
 @Builder
-public class PlannerCommentResponse {
+public class PlannerCommentResponseDTO {
 
     private final int id;
     private final int menteeId;
@@ -17,8 +17,8 @@ public class PlannerCommentResponse {
     private final String comment;
     private final LocalDateTime completedAt;
 
-    public static PlannerCommentResponse from(Planner planner) {
-        return PlannerCommentResponse.builder()
+    public static PlannerCommentResponseDTO from(Planner planner) {
+        return PlannerCommentResponseDTO.builder()
                 .id(planner.getId())
                 .menteeId(planner.getMentee().getId())
                 .date(planner.getDate())
