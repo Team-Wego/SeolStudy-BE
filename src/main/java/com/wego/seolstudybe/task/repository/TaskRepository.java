@@ -22,4 +22,11 @@ public interface TaskRepository extends JpaRepository<Task, Integer> {
     List<Task> findByMenteeIdAndDateOrderBySequenceAsc(int menteeId, LocalDate date);
 
     List<Task> findByDateAndIsCheckedFalse(LocalDate date);
+
+    int countByMenteeIdAndDateAndType(int menteeId, LocalDate date, TaskType type);
+
+    int countByMenteeIdAndDateAndTypeAndSubmittedAtIsNotNull(int menteeId, LocalDate date, TaskType type);
+
+    List<Task> findTop10ByMenteeIdInAndHasFeedbackFalseAndSubmittedAtIsNotNullOrderBySubmittedAtAsc(List<Integer> menteeIds);
+
 }
