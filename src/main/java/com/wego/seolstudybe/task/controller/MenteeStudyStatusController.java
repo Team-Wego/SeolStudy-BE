@@ -29,7 +29,7 @@ public class MenteeStudyStatusController {
             @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate startDate,
             @Parameter(description = "조회 종료일 (yyyy-MM-dd)")
             @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate endDate,
-            @Parameter(description = "과목 (KOR, ENG, MATH, ETC). null이면 전체 과목 조회")
+            @Parameter(description = "과목 (KOR, ENG, MATH). null이면 전체 과목 조회")
             @RequestParam(required = false) Subject subject
     ) {
         StudyStatusResponse studyStatus = commonTaskService.getStudyStatus(menteeId, startDate, endDate, subject);
