@@ -15,6 +15,7 @@ public class FeedbackListResponse {
     private int feedbackId;
     private FeedbackType feedbackType;
     private Subject subject;
+    private String goalName;
     private String taskTitle;
     private LocalDateTime submittedAt;
     private LocalDateTime createdAt;
@@ -26,6 +27,7 @@ public class FeedbackListResponse {
                 .feedbackId(feedback.getId())
                 .feedbackType(feedback.getType())
                 .subject(feedback.getTask() != null ? feedback.getTask().getSubject() : null)
+                .goalName(feedback.getTask() != null && feedback.getTask().getGoal() != null ? feedback.getTask().getGoal().getName() : null)
                 .taskTitle(feedback.getTask() != null ? feedback.getTask().getTitle() : null)
                 .submittedAt(feedback.getTask() != null ? feedback.getTask().getSubmittedAt() : null)
                 .createdAt(feedback.getCreatedAt())

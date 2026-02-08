@@ -11,9 +11,14 @@ import java.time.LocalDate;
 import java.util.List;
 
 public interface FeedbackRepository extends JpaRepository<Feedback, Integer> {
-    List<Feedback> findByMenteeIdOrderByCreatedAtDesc(final int menteeId);
+    @Query("SELECT f FROM Feedback f LEFT JOIN FETCH f.task t LEFT JOIN FETCH t.goal " +
+            "WHERE f.mentee.id = :menteeId ORDER BY f.createdAt DESC")
+    List<Feedback> findByMenteeIdOrderByCreatedAtDesc(@Param("menteeId") final int menteeId);
 
-    List<Feedback> findByMenteeIdAndTypeOrderByCreatedAtDesc(final int menteeId, final FeedbackType type);
+    @Query("SELECT f FROM Feedback f LEFT JOIN FETCH f.task t LEFT JOIN FETCH t.goal " +
+            "WHERE f.mentee.id = :menteeId AND f.type = :type ORDER BY f.createdAt DESC")
+    List<Feedback> findByMenteeIdAndTypeOrderByCreatedAtDesc(
+            @Param("menteeId") final int menteeId, @Param("type") final FeedbackType type);
 
     @Query("SELECT f.targetDate AS date, COUNT(f) AS count FROM Feedback f " +
             "WHERE f.mentee.id = :menteeId AND f.targetDate BETWEEN :startDate AND :endDate AND f.type = 'TASK'" +
