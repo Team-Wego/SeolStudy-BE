@@ -7,6 +7,7 @@ import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.MissingServletRequestParameterException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
+import org.springframework.web.method.annotation.MethodArgumentTypeMismatchException;
 import org.springframework.web.multipart.MaxUploadSizeExceededException;
 import org.springframework.web.multipart.support.MissingServletRequestPartException;
 
@@ -91,6 +92,19 @@ public class GlobalExceptionHandler {
         final ErrorCode errorCode = ErrorCode.BAD_REQUEST;
         final ErrorResponse errorResponse = ErrorResponse.of(errorCode.getCode(),
                 String.format("필수 파라미터가 누락되었습니다: %s", e.getParameterName()));
+        return new ResponseEntity<>(errorResponse, errorCode.getStatus());
+    }
+
+    /**
+     * 파라미터 타입 불일치 예외 처리
+     * - 날짜 형식 오류, 잘못된 enum 값 등
+     */
+    @ExceptionHandler(MethodArgumentTypeMismatchException.class)
+    public ResponseEntity<ErrorResponse> handleMethodArgumentTypeMismatchException(MethodArgumentTypeMismatchException e) {
+        log.error("[MethodArgumentTypeMismatchException] {}", e.getMessage());
+        final ErrorCode errorCode = ErrorCode.INVALID_PARAMETER_TYPE;
+        final ErrorResponse errorResponse = ErrorResponse.of(errorCode.getCode(),
+                String.format("'%s' 파라미터 형식이 올바르지 않습니다.", e.getName()));
         return new ResponseEntity<>(errorResponse, errorCode.getStatus());
     }
 

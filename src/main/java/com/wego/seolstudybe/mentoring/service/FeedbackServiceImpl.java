@@ -21,6 +21,8 @@ import com.wego.seolstudybe.mentoring.exception.FeedbackNotFoundException;
 import com.wego.seolstudybe.mentoring.exception.TaskIdRequiredException;
 import com.wego.seolstudybe.mentoring.repository.FeedbackImageRepository;
 import com.wego.seolstudybe.mentoring.repository.FeedbackRepository;
+import com.wego.seolstudybe.notification.entity.enums.NotificationType;
+import com.wego.seolstudybe.notification.service.NotificationService;
 import com.wego.seolstudybe.task.entity.Task;
 import com.wego.seolstudybe.task.repository.TaskRepository;
 import com.wego.seolstudybe.task.exception.TaskNotFoundException;
@@ -43,6 +45,7 @@ public class FeedbackServiceImpl implements FeedbackService {
     private final MemberRepository memberRepository;
     private final TaskRepository taskRepository;
     private final S3Service s3Service;
+    private final NotificationService notificationService;
 
     private static final String FEEDBACK_FOLDER = "feedback";
 
@@ -82,6 +85,22 @@ public class FeedbackServiceImpl implements FeedbackService {
         feedback = feedbackRepository.save(feedback);
 
         uploadFiles(files, feedback);
+
+        // 멘티에게 피드백 알림 전송
+        String notificationTitle = FeedbackType.TASK.equals(request.getType())
+                ? "과제 피드백이 등록되었습니다"
+                : "플래너 피드백이 등록되었습니다";
+        notificationService.notify(
+                (long) mentee.getId(),
+                NotificationType.FEEDBACK,
+                notificationTitle,
+                feedback.getContent(),
+                java.util.Map.of(
+                        "type", "FEEDBACK",
+                        "feedbackId", String.valueOf(feedback.getId()),
+                        "feedbackType", request.getType().name()
+                )
+        );
 
         return feedback;
     }

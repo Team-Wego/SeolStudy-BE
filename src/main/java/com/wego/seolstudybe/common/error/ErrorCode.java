@@ -10,6 +10,7 @@ public enum ErrorCode {
     ENTITY_NOT_FOUND(HttpStatus.NOT_FOUND, "COMMON001", "요청한 데이터를 찾을 수 없습니다."),
     INTERNAL_SERVER_ERROR(HttpStatus.INTERNAL_SERVER_ERROR, "COMMON002", "서버 내부 오류가 발생했습니다."),
     BAD_REQUEST(HttpStatus.BAD_REQUEST, "COMMON003", "잘못된 요청입니다."),
+    INVALID_PARAMETER_TYPE(HttpStatus.BAD_REQUEST, "COMMON004", "파라미터 형식이 올바르지 않습니다."),
 
     /* MEMBER */
     MEMBER_NOT_FOUND(HttpStatus.NOT_FOUND, "MEMBER001", "회원을 찾을 수 없습니다."),
@@ -30,6 +31,7 @@ public enum ErrorCode {
     /* NOTIFICATION */
     FCM_TOKEN_NOT_FOUND(HttpStatus.NOT_FOUND, "NOTI001", "FCM 토큰을 찾을 수 없습니다."),
     PUSH_NOTIFICATION_FAILED(HttpStatus.INTERNAL_SERVER_ERROR, "NOTI002", "푸시 알림 전송에 실패했습니다."),
+    NOTIFICATION_NOT_FOUND(HttpStatus.NOT_FOUND, "NOTI003", "알림을 찾을 수 없습니다."),
 
     /* GOAL */
     GOAL_NOT_FOUND(HttpStatus.NOT_FOUND, "GOAL001", "목표 데이터를 찾을 수 없습니다."),
@@ -54,7 +56,10 @@ public enum ErrorCode {
     PLANNER_NOT_FOUND(HttpStatus.NOT_FOUND, "PLANNER001", "플래너를 찾을 수 없습니다."),
 
     /* STUDY_TIME */
-    STUDY_TIME_NOT_FOUND(HttpStatus.NOT_FOUND, "STUDY_TIME001", "공부 시간이 존재하지 않습니다.");
+    STUDY_TIME_NOT_FOUND(HttpStatus.NOT_FOUND, "STUDY_TIME001", "공부 시간이 존재하지 않습니다."),
+
+    /* TASK_IMAGE */
+    TASK_IMAGE_UPLOAD_PERIOD_EXPIRED(HttpStatus.BAD_REQUEST, "TASK_IMAGE001", "과제 인증 업로드 가능 기간이 만료되었습니다.");
 
     private final HttpStatus status;
     private final String code;

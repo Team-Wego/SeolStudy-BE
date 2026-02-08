@@ -4,15 +4,21 @@ import com.wego.seolstudybe.task.dto.request.TaskCreateRequest;
 import com.wego.seolstudybe.task.dto.request.TaskSequenceUpdateRequest;
 import com.wego.seolstudybe.task.dto.request.TaskStatusUpdateRequest;
 import com.wego.seolstudybe.task.dto.request.TaskUpdateRequest;
+import com.wego.seolstudybe.task.dto.response.TaskImageDto;
 import com.wego.seolstudybe.task.dto.response.TaskResponse;
 import com.wego.seolstudybe.task.service.MenteeTaskService;
+import com.wego.seolstudybe.task.service.TaskImageService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
+
+import java.util.List;
 
 @Tag(name = "멘티 할 일 관리 API", description = "멘티 할 일 관리 API")
 @RestController
@@ -21,6 +27,7 @@ import org.springframework.web.bind.annotation.*;
 public class MenteeTaskController {
 
     private final MenteeTaskService menteeTaskService;
+    private final TaskImageService taskImageService;
 
     @PostMapping
     @Operation(summary = "할 일 등록", description = "멘티의 할 일을 등록합니다.")
@@ -73,5 +80,16 @@ public class MenteeTaskController {
     ) {
         TaskResponse response = menteeTaskService.updateTaskStatus(menteeId, taskId, request);
         return ResponseEntity.ok(response);
+    }
+
+    @PostMapping("/{taskId}/images")
+    @Operation(summary = "과제 수행 결과 업로드", description = "과제 수행 후 휴대폰 카메라로 촬영하거나 갤러리 이미지 파일을 업로드할 수 있습니다. 과제 날짜 기준 다음날 오전 6시까지만 업로드 가능합니다.")
+    public ResponseEntity<List<TaskImageDto>> uploadTaskImages(
+            @PathVariable int menteeId,
+            @PathVariable int taskId,
+            @RequestParam("files") List<MultipartFile> files
+    ) {
+        List<TaskImageDto> response = taskImageService.uploadTaskImages(menteeId, taskId, files);
+        return ResponseEntity.status(HttpStatus.CREATED).body(response);
     }
 }
