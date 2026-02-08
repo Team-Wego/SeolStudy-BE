@@ -3,6 +3,8 @@ package com.wego.seolstudybe.task.service;
 import com.wego.seolstudybe.member.entity.Member;
 import com.wego.seolstudybe.member.exception.MemberNotFoundException;
 import com.wego.seolstudybe.member.repository.MemberRepository;
+import com.wego.seolstudybe.mentoring.entity.Goal;
+import com.wego.seolstudybe.mentoring.repository.GoalRepository;
 import com.wego.seolstudybe.task.dto.request.TaskCreateRequest;
 import com.wego.seolstudybe.task.dto.request.TaskSequenceUpdateRequest;
 import com.wego.seolstudybe.task.dto.request.TaskStatusUpdateRequest;
@@ -26,6 +28,7 @@ public class MenteeTaskServiceImpl implements MenteeTaskService {
 
     private final TaskRepository taskRepository;
     private final MemberRepository memberRepository;
+    private final GoalRepository goalRepository;
 
     @Override
     @Transactional
@@ -35,12 +38,20 @@ public class MenteeTaskServiceImpl implements MenteeTaskService {
 
         int nextSequence = taskRepository.findMaxSequenceByMenteeIdAndDate(memberId, request.getDate()) + 1;
 
+        Goal goal = null;
+        if (request.getGoalId() != null) {
+            goal = goalRepository.findByIdAndDeletedAtIsNull(request.getGoalId())
+                    .orElse(null);
+        }
+
         Task task = Task.builder()
                 .mentee(mentee)
                 .title(request.getTitle())
+                .description(request.getDescription())
                 .type(TaskType.TODO)
                 .date(request.getDate())
                 .subject(request.getSubject())
+                .goal(goal)
                 .sequence(nextSequence)
                 .createdAt(LocalDateTime.now())
                 .build();
