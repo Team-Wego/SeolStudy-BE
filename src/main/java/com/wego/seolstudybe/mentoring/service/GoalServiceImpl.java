@@ -1,5 +1,6 @@
 package com.wego.seolstudybe.mentoring.service;
 
+import com.wego.seolstudybe.common.service.S3Service;
 import com.wego.seolstudybe.member.entity.Member;
 import com.wego.seolstudybe.member.exception.MemberNotFoundException;
 import com.wego.seolstudybe.member.repository.MemberRepository;
@@ -12,8 +13,6 @@ import com.wego.seolstudybe.mentoring.entity.WorksheetFile;
 import com.wego.seolstudybe.mentoring.entity.enums.GoalCreator;
 import com.wego.seolstudybe.mentoring.entity.enums.Subject;
 import com.wego.seolstudybe.member.entity.enums.Role;
-import com.wego.seolstudybe.common.error.ErrorCode;
-import com.wego.seolstudybe.common.error.exception.BusinessException;
 import com.wego.seolstudybe.mentoring.exception.GoalAccessDeniedException;
 import com.wego.seolstudybe.mentoring.exception.GoalMenteeIdRequiredException;
 import com.wego.seolstudybe.mentoring.exception.GoalNotFoundException;
@@ -30,9 +29,13 @@ import java.util.List;
 @RequiredArgsConstructor
 @Service
 public class GoalServiceImpl implements GoalService {
+    private static final String WORKSHEET_FOLDER = "worksheet";
+
     private final GoalRepository goalRepository;
     private final MemberRepository memberRepository;
     private final WorksheetFileRepository worksheetFileRepository;
+
+    private final S3Service s3Service;
 
     private final GoalMapper goalMapper;
 
@@ -135,8 +138,7 @@ public class GoalServiceImpl implements GoalService {
             return null;
         }
 
-        // TODO 파일 S3 업로드
-        final String s3Url = "https://amazon.s3.bucket/file.pdf";
+        final String s3Url = s3Service.uploadFile(file, WORKSHEET_FOLDER);
 
         final WorksheetFile worksheetFile = new WorksheetFile(member, file.getOriginalFilename(), s3Url,
                 (float) file.getSize(), file.getContentType(), subject);

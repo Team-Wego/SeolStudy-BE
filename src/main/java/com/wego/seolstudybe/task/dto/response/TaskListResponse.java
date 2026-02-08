@@ -19,4 +19,6 @@ public class TaskListResponse {
     private boolean isChecked;
     private boolean hasFeedback;
     private Integer sequence;
+    private Integer goalId;
+    private String goalName;
 }

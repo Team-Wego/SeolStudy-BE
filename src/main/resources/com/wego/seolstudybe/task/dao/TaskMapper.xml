@@ -16,8 +16,11 @@
             A.date,
             A.is_checked AS isChecked,
             A.has_feedback AS hasFeedback,
-            A.sequence
+            A.sequence,
+            A.goal_id AS goalId,
+            B.name AS goalName
         FROM task A
+                 LEFT JOIN goal B ON A.goal_id = B.id
         WHERE A.mentee_id = #{menteeId}
           AND A.date BETWEEN #{startDate} AND #{endDate}
         ORDER BY A.date, A.sequence
@@ -151,6 +154,23 @@
           </if>
         GROUP BY A.subject
         ORDER BY A.subject
+    </select>
+
+    <!-- 기간별 일별 과제 현황 조회 -->
+    <select id="findDailyTaskStatusByMenteeIdAndDateRange"
+            resultType="com.wego.seolstudybe.task.dto.response.DailyTaskStatusResponse">
+        SELECT
+               A.date
+             , COUNT(*) AS totalTaskCount
+             , SUM(CASE WHEN A.is_checked = true THEN 1 ELSE 0 END) AS completedTaskCount
+          FROM task A
+         WHERE A.mentee_id = #{menteeId}
+           AND A.date BETWEEN #{startDate} AND #{endDate}
+         <if test="type != null">
+             AND A.type = #{type}
+         </if>
+         GROUP BY A.date
+         ORDER BY A.date
     </select>
 
 </mapper>

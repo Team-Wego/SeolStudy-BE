@@ -2,6 +2,7 @@ package com.wego.seolstudybe.task.service;
 
 import com.wego.seolstudybe.mentoring.entity.enums.Subject;
 import com.wego.seolstudybe.task.dto.response.*;
+import com.wego.seolstudybe.task.entity.enums.TaskType;
 
 import java.time.LocalDate;
 import java.util.List;
@@ -19,4 +20,7 @@ public interface CommonTaskService {
     DailyStudyTimeResponse getStudyTime(int menteeId, LocalDate date);
 
     StudyStatusResponse getStudyStatus(int menteeId, LocalDate startDate, LocalDate endDate, Subject subject);
+
+    List<DailyTaskStatusResponse> getDailyTaskStatus(final int menteeId, final LocalDate startDate,
+                                                     final LocalDate endDate, final TaskType taskType);
 }

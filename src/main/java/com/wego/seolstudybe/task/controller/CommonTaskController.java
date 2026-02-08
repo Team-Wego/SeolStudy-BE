@@ -1,6 +1,7 @@
 package com.wego.seolstudybe.task.controller;
 
 import com.wego.seolstudybe.task.dto.response.*;
+import com.wego.seolstudybe.task.entity.enums.TaskType;
 import com.wego.seolstudybe.task.service.CommonTaskService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
@@ -73,5 +74,19 @@ public class CommonTaskController {
     ) {
         DailyStudyTimeResponse studyTime = commonTaskService.getStudyTime(menteeId, date);
         return ResponseEntity.ok(studyTime);
+    }
+
+    @GetMapping("/mentees/{menteeId}/tasks/daily-status")
+    @Operation(summary = "기간별 일별 과제 현황 조회", description = "특정 기간 내의 일별 총 과제 개수 및 완료된 과제 개수 목록을 조회합니다.")
+    public ResponseEntity<List<DailyTaskStatusResponse>> getDailyTaskStatus(@PathVariable final int menteeId,
+                                                                            @Parameter(description = "조회 시작일 (yyyy-MM-dd)")
+                                                                            @RequestParam final LocalDate startDate,
+                                                                            @Parameter(description = "조회 종료일 (yyyy-MM-dd)")
+                                                                            @RequestParam final LocalDate endDate,
+                                                                            @RequestParam(required = false) final TaskType taskType) {
+        final List<DailyTaskStatusResponse> statuses =
+                commonTaskService.getDailyTaskStatus(menteeId, startDate, endDate, taskType);
+
+        return ResponseEntity.ok(statuses);
     }
 }
