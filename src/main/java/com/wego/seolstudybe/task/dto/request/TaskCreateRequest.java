@@ -20,4 +20,8 @@ public class TaskCreateRequest {
 
     @NotNull(message = "과목은 필수입니다.")
     private Subject subject;
+
+    private String description;
+
+    private Integer goalId;
 }
