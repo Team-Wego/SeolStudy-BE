@@ -2,6 +2,7 @@ package com.wego.seolstudybe.task.dao;
 
 import com.wego.seolstudybe.mentoring.entity.enums.Subject;
 import com.wego.seolstudybe.task.dto.response.*;
+import com.wego.seolstudybe.task.entity.enums.TaskType;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
 
@@ -48,5 +49,11 @@ public interface TaskMapper {
             @Param("startDate") LocalDate startDate,
             @Param("endDate") LocalDate endDate,
             @Param("subject") Subject subject
+    );
+
+    List<DailyTaskStatusResponse> findDailyTaskStatusByMenteeIdAndDateRange(@Param("menteeId") final int menteeId,
+                                                                            @Param("startDate") final LocalDate startDate,
+                                                                            @Param("endDate") final LocalDate endDate,
+                                                                            @Param("type") final TaskType taskType
     );
 }
