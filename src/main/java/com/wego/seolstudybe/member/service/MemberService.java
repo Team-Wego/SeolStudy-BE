@@ -3,7 +3,9 @@ package com.wego.seolstudybe.member.service;
 import com.wego.seolstudybe.member.dto.LoginRequest;
 import com.wego.seolstudybe.member.dto.LoginResponse;
 import com.wego.seolstudybe.member.dto.MemberResponse;
+import com.wego.seolstudybe.member.dto.MemoResponse;
 import com.wego.seolstudybe.member.dto.UpdateMemberRequest;
+import com.wego.seolstudybe.member.dto.UpdateMemoRequest;
 import com.wego.seolstudybe.member.entity.Member;
 import com.wego.seolstudybe.member.entity.enums.Role;
 import com.wego.seolstudybe.member.exception.InvalidPasswordException;
@@ -54,5 +56,22 @@ public class MemberService {
         );
 
         return new MemberResponse(member);
+    }
+
+    @Transactional(readOnly = true)
+    public MemoResponse getMemo(int menteeId) {
+        Member member = memberRepository.findById(menteeId)
+                .orElseThrow(MemberNotFoundException::new);
+        return new MemoResponse(member);
+    }
+
+    @Transactional
+    public MemoResponse updateMemo(int menteeId, UpdateMemoRequest request) {
+        Member member = memberRepository.findById(menteeId)
+                .orElseThrow(MemberNotFoundException::new);
+
+        member.updateMemo(request.getMemo());
+
+        return new MemoResponse(member);
     }
 }
