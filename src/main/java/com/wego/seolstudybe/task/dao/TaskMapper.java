@@ -15,7 +15,8 @@ public interface TaskMapper {
     List<TaskListResponse> findTasksByMenteeIdAndDateRange(
             @Param("menteeId") int menteeId,
             @Param("startDate") LocalDate startDate,
-            @Param("endDate") LocalDate endDate
+            @Param("endDate") LocalDate endDate,
+            @Param("taskType") TaskType taskType
     );
 
     List<DailyTaskResponse> findDailyTasksByMenteeIdAndDate(
@@ -48,7 +49,8 @@ public interface TaskMapper {
             @Param("menteeId") int menteeId,
             @Param("startDate") LocalDate startDate,
             @Param("endDate") LocalDate endDate,
-            @Param("subject") Subject subject
+            @Param("subject") Subject subject,
+            @Param("taskType") TaskType taskType
     );
 
     List<DailyTaskStatusResponse> findDailyTaskStatusByMenteeIdAndDateRange(@Param("menteeId") final int menteeId,

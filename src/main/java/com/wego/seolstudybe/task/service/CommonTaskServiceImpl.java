@@ -21,8 +21,8 @@ public class CommonTaskServiceImpl implements CommonTaskService {
 
     @Override
     @Transactional(readOnly = true)
-    public List<TaskListResponse> getTasksByDateRange(int menteeId, LocalDate startDate, LocalDate endDate) {
-        return taskMapper.findTasksByMenteeIdAndDateRange(menteeId, startDate, endDate);
+    public List<TaskListResponse> getTasksByDateRange(int menteeId, LocalDate startDate, LocalDate endDate, TaskType taskType) {
+        return taskMapper.findTasksByMenteeIdAndDateRange(menteeId, startDate, endDate, taskType);
     }
 
     @Override
@@ -72,9 +72,9 @@ public class CommonTaskServiceImpl implements CommonTaskService {
 
     @Override
     @Transactional(readOnly = true)
-    public StudyStatusResponse getStudyStatus(int menteeId, LocalDate startDate, LocalDate endDate, Subject subject) {
+    public StudyStatusResponse getStudyStatus(int menteeId, LocalDate startDate, LocalDate endDate, Subject subject, TaskType taskType) {
         List<SubjectStudyStatusResponse> subjects = taskMapper.findStudyStatusByMenteeIdAndDateRange(
-                menteeId, startDate, endDate, subject);
+                menteeId, startDate, endDate, subject, taskType);
         return StudyStatusResponse.from(subjects != null ? subjects : Collections.emptyList());
     }
 
