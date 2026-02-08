@@ -63,4 +63,8 @@ public class Member {
         this.grade = grade;
         this.goalUniversity = goalUniversity;
     }
+
+    public void updateMemo(String memo) {
+        this.memo = memo;
+    }
 }

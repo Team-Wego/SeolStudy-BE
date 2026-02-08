@@ -3,7 +3,9 @@ package com.wego.seolstudybe.member.controller;
 import com.wego.seolstudybe.member.dto.LoginRequest;
 import com.wego.seolstudybe.member.dto.LoginResponse;
 import com.wego.seolstudybe.member.dto.MemberResponse;
+import com.wego.seolstudybe.member.dto.MemoResponse;
 import com.wego.seolstudybe.member.dto.UpdateMemberRequest;
+import com.wego.seolstudybe.member.dto.UpdateMemoRequest;
 import com.wego.seolstudybe.member.service.MemberService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.MediaType;
@@ -36,6 +38,19 @@ public class MemberController {
                                                        @RequestPart("request") UpdateMemberRequest request) {
         MemberResponse response = memberService.updateMember(memberId, file, request);
 
+        return ResponseEntity.ok(response);
+    }
+
+    @GetMapping("/{menteeId}/memo")
+    public ResponseEntity<MemoResponse> getMemo(@PathVariable int menteeId) {
+        MemoResponse response = memberService.getMemo(menteeId);
+        return ResponseEntity.ok(response);
+    }
+
+    @PutMapping("/{menteeId}/memo")
+    public ResponseEntity<MemoResponse> updateMemo(@PathVariable int menteeId,
+                                                   @RequestBody UpdateMemoRequest request) {
+        MemoResponse response = memberService.updateMemo(menteeId, request);
         return ResponseEntity.ok(response);
     }
 }
