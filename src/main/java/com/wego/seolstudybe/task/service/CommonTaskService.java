@@ -9,7 +9,7 @@ import java.util.List;
 
 public interface CommonTaskService {
 
-    List<TaskListResponse> getTasksByDateRange(int menteeId, LocalDate startDate, LocalDate endDate);
+    List<TaskListResponse> getTasksByDateRange(int menteeId, LocalDate startDate, LocalDate endDate, TaskType taskType);
 
     List<DailyTaskResponse> getDailyTasks(int menteeId, LocalDate date);
 
@@ -19,7 +19,7 @@ public interface CommonTaskService {
 
     DailyStudyTimeResponse getStudyTime(int menteeId, LocalDate date);
 
-    StudyStatusResponse getStudyStatus(int menteeId, LocalDate startDate, LocalDate endDate, Subject subject);
+    StudyStatusResponse getStudyStatus(int menteeId, LocalDate startDate, LocalDate endDate, Subject subject, TaskType taskType);
 
     List<DailyTaskStatusResponse> getDailyTaskStatus(final int menteeId, final LocalDate startDate,
                                                      final LocalDate endDate, final TaskType taskType);

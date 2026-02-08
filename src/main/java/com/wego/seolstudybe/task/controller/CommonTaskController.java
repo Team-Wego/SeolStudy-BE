@@ -28,9 +28,10 @@ public class CommonTaskController {
             @Parameter(description = "조회 시작일 (yyyy-MM-dd)")
             @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate startDate,
             @Parameter(description = "조회 종료일 (yyyy-MM-dd)")
-            @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate endDate
+            @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate endDate,
+            @RequestParam(required = false) TaskType taskType
     ) {
-        List<TaskListResponse> tasks = commonTaskService.getTasksByDateRange(menteeId, startDate, endDate);
+        List<TaskListResponse> tasks = commonTaskService.getTasksByDateRange(menteeId, startDate, endDate, taskType);
         return ResponseEntity.ok(tasks);
     }
 

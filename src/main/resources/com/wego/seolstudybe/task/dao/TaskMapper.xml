@@ -23,6 +23,9 @@
                  LEFT JOIN goal B ON A.goal_id = B.id
         WHERE A.mentee_id = #{menteeId}
           AND A.date BETWEEN #{startDate} AND #{endDate}
+        <if test="taskType != null">
+            AND A.type = #{taskType}
+        </if>
         ORDER BY A.date, A.sequence
     </select>
 
@@ -151,6 +154,9 @@
           AND A.date BETWEEN #{startDate} AND #{endDate}
           <if test="subject != null">
               AND A.subject = #{subject}
+          </if>
+          <if test="taskType != null">
+              AND A.type = #{taskType}
           </if>
         GROUP BY A.subject
         ORDER BY A.subject

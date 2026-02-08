@@ -2,6 +2,7 @@ package com.wego.seolstudybe.task.controller;
 
 import com.wego.seolstudybe.mentoring.entity.enums.Subject;
 import com.wego.seolstudybe.task.dto.response.StudyStatusResponse;
+import com.wego.seolstudybe.task.entity.enums.TaskType;
 import com.wego.seolstudybe.task.service.CommonTaskService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
@@ -30,9 +31,10 @@ public class MenteeStudyStatusController {
             @Parameter(description = "조회 종료일 (yyyy-MM-dd)")
             @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate endDate,
             @Parameter(description = "과목 (KOR, ENG, MATH). null이면 전체 과목 조회")
-            @RequestParam(required = false) Subject subject
+            @RequestParam(required = false) Subject subject,
+            @RequestParam(required = false) TaskType taskType
     ) {
-        StudyStatusResponse studyStatus = commonTaskService.getStudyStatus(menteeId, startDate, endDate, subject);
+        StudyStatusResponse studyStatus = commonTaskService.getStudyStatus(menteeId, startDate, endDate, subject, taskType);
         return ResponseEntity.ok(studyStatus);
     }
 }
