@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.wego.seolstudybe.mentoring.dao.WorksheetFileMapper">
+    <select id="findByMenteeIdAndKeywordAndSubject" resultType="com.wego.seolstudybe.mentoring.dto.WorksheetFileResponse">
+        SELECT
+               A.name AS goalName
+             , A.id AS goalId
+             , A.worksheet_id AS worksheetId
+             , B.name AS worksheetName
+             , B.url
+             , B.size
+             , B.type
+             , B.subject
+          FROM goal AS A
+          JOIN worksheet_file AS B
+            ON A.worksheet_id = B.id
+         WHERE A.target_mentee_id = #{menteeId} AND A.deleted_at IS NULL
+        <if test="keyword != null and keyword != ''">
+            AND B.name LIKE CONCAT('%', #{keyword}, '%')
+        </if>
+        <if test="subject != null">
+            AND A.subject = #{subject}
+        </if>
+    </select>
+</mapper>

@@ -6,5 +6,5 @@ import com.wego.seolstudybe.mentoring.entity.enums.Subject;
 import java.util.List;
 
 public interface WorksheetFileService {
-    List<WorksheetFileResponse> getWorksheetFiles(final int memberId, final Subject subject);
+    List<WorksheetFileResponse> getWorksheetFiles(final int memberId, final String keyword, final Subject subject);
 }
