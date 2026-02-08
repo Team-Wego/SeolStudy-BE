@@ -6,6 +6,7 @@ import com.wego.seolstudybe.mentoring.entity.enums.Subject;
 import lombok.Builder;
 import lombok.Getter;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 
 @Builder
@@ -17,6 +18,7 @@ public class FeedbackListResponse {
     private String taskTitle;
     private LocalDateTime submittedAt;
     private LocalDateTime createdAt;
+    private LocalDate targetDate;
     private String content;
 
     public static FeedbackListResponse of(final Feedback feedback) {
@@ -27,6 +29,7 @@ public class FeedbackListResponse {
                 .taskTitle(feedback.getTask() != null ? feedback.getTask().getTitle() : null)
                 .submittedAt(feedback.getTask() != null ? feedback.getTask().getSubmittedAt() : null)
                 .createdAt(feedback.getCreatedAt())
+                .targetDate(feedback.getTargetDate())
                 .content(feedback.getContent())
                 .build();
     }
