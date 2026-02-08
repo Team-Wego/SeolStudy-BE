@@ -82,6 +82,16 @@ public class NotificationService {
     }
 
     /**
+     * 알림 삭제
+     */
+    @Transactional
+    public void deleteNotification(Long notificationId) {
+        Notification notification = notificationRepository.findById(notificationId)
+                .orElseThrow(() -> new BusinessException(ErrorCode.NOTIFICATION_NOT_FOUND));
+        notificationRepository.delete(notification);
+    }
+
+    /**
      * 읽지 않은 알림 수 조회
      */
     @Transactional(readOnly = true)

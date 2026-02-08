@@ -36,7 +36,14 @@ public class NotificationRestController {
         return ResponseEntity.ok().build();
     }
 
-    @Operation(summary = "미읽은 알림 수 조회", description = "미읽은 알림 수를 조회합니다.")
+    @Operation(summary = "알림 삭제", description = "알림을 삭제합니다.")
+    @DeleteMapping("/{notificationId}")
+    public ResponseEntity<Void> deleteNotification(@PathVariable Long notificationId) {
+        notificationService.deleteNotification(notificationId);
+        return ResponseEntity.ok().build();
+    }
+
+    @Operation(summary = "읽지 않은 알림 수 조회", description = "읽지 않은 알림 수를 조회합니다.")
     @GetMapping("/{memberId:\\d+}/unread-count")
     public ResponseEntity<Map<String, Long>> getUnreadCount(@PathVariable Long memberId) {
         long count = notificationService.getUnreadCount(memberId);
