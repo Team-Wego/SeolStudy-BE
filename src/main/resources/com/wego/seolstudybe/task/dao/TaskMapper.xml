@@ -16,8 +16,11 @@
             A.date,
             A.is_checked AS isChecked,
             A.has_feedback AS hasFeedback,
-            A.sequence
+            A.sequence,
+            A.goal_id AS goalId,
+            B.name AS goalName
         FROM task A
+                 LEFT JOIN goal B ON A.goal_id = B.id
         WHERE A.mentee_id = #{menteeId}
           AND A.date BETWEEN #{startDate} AND #{endDate}
         ORDER BY A.date, A.sequence
