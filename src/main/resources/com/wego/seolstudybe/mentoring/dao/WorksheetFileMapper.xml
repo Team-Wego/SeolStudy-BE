@@ -15,7 +15,7 @@
           FROM goal AS A
           JOIN worksheet_file AS B
             ON A.worksheet_id = B.id
-         WHERE A.target_mentee_id = #{menteeId} AND A.deleted_at IS NULL
+         WHERE A.target_mentee_id = #{menteeId} AND A.deleted_at IS NULL AND A.target_mentee_id != A.creator_id
         <if test="keyword != null and keyword != ''">
             AND B.name LIKE CONCAT('%', #{keyword}, '%')
         </if>
