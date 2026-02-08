@@ -2,6 +2,7 @@ package com.wego.seolstudybe.task.service;
 
 import com.wego.seolstudybe.mentoring.entity.enums.Subject;
 import com.wego.seolstudybe.task.dto.response.*;
+import com.wego.seolstudybe.task.entity.enums.TaskType;
 import com.wego.seolstudybe.task.exception.TaskNotFoundException;
 import com.wego.seolstudybe.task.dao.TaskMapper;
 import lombok.RequiredArgsConstructor;
@@ -20,8 +21,8 @@ public class CommonTaskServiceImpl implements CommonTaskService {
 
     @Override
     @Transactional(readOnly = true)
-    public List<TaskListResponse> getTasksByDateRange(int menteeId, LocalDate startDate, LocalDate endDate) {
-        return taskMapper.findTasksByMenteeIdAndDateRange(menteeId, startDate, endDate);
+    public List<TaskListResponse> getTasksByDateRange(int menteeId, LocalDate startDate, LocalDate endDate, TaskType taskType) {
+        return taskMapper.findTasksByMenteeIdAndDateRange(menteeId, startDate, endDate, taskType);
     }
 
     @Override
@@ -71,9 +72,16 @@ public class CommonTaskServiceImpl implements CommonTaskService {
 
     @Override
     @Transactional(readOnly = true)
-    public StudyStatusResponse getStudyStatus(int menteeId, LocalDate startDate, LocalDate endDate, Subject subject) {
+    public StudyStatusResponse getStudyStatus(int menteeId, LocalDate startDate, LocalDate endDate, Subject subject, TaskType taskType) {
         List<SubjectStudyStatusResponse> subjects = taskMapper.findStudyStatusByMenteeIdAndDateRange(
-                menteeId, startDate, endDate, subject);
+                menteeId, startDate, endDate, subject, taskType);
         return StudyStatusResponse.from(subjects != null ? subjects : Collections.emptyList());
+    }
+
+    @Transactional(readOnly = true)
+    @Override
+    public List<DailyTaskStatusResponse> getDailyTaskStatus(final int menteeId, final LocalDate startDate,
+                                                            final LocalDate endDate, final TaskType taskType) {
+        return taskMapper.findDailyTaskStatusByMenteeIdAndDateRange(menteeId, startDate, endDate, taskType);
     }
 }

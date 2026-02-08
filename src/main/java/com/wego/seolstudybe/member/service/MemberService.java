@@ -1,5 +1,6 @@
 package com.wego.seolstudybe.member.service;
 
+import com.wego.seolstudybe.common.service.S3Service;
 import com.wego.seolstudybe.member.dto.LoginRequest;
 import com.wego.seolstudybe.member.dto.LoginResponse;
 import com.wego.seolstudybe.member.dto.MemberResponse;
@@ -14,12 +15,15 @@ import com.wego.seolstudybe.member.repository.MemberRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.multipart.MultipartFile;
 
 @Service
 @RequiredArgsConstructor
 public class MemberService {
+    private static final String PROFILE_FOLDER = "profile";
 
     private final MemberRepository memberRepository;
+    private final S3Service s3Service;
 
     @Transactional(readOnly = true)
     public LoginResponse login(LoginRequest request) {
@@ -44,16 +48,25 @@ public class MemberService {
     }
 
     @Transactional
-    public MemberResponse updateMember(int id, UpdateMemberRequest request) {
-        Member member = memberRepository.findById(id)
+    public MemberResponse updateMember(final int id, final MultipartFile file, final UpdateMemberRequest request) {
+        final Member member = memberRepository.findById(id)
                 .orElseThrow(MemberNotFoundException::new);
 
-        member.update(
-                request.getProfileUrl(),
-                request.getName(),
-                request.getGrade(),
-                request.getGoalUniversity()
-        );
+        String profileUrl = request.getProfileUrl();
+
+        if (request.isNewProfileImage()) {
+            if (profileUrl != null) {
+                s3Service.deleteFile(profileUrl);
+            }
+
+            if (file != null && !file.isEmpty()) {
+                profileUrl = s3Service.uploadFile(file, PROFILE_FOLDER);
+            } else {
+                profileUrl = null;
+            }
+        }
+
+        member.update(profileUrl, request.getName(), request.getGrade(), request.getGoalUniversity());
 
         return new MemberResponse(member);
     }

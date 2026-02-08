@@ -29,7 +29,6 @@ public class NotificationService {
 
     /**
      * 알림 전송 (DB 저장 + FCM 푸시 + WebSocket)
-     * 다른 도메인에서 이 메서드 하나만 호출하면 됩니다.
      */
     @Transactional
     public void notify(Long receiverId, NotificationType type, String title, String body, Map<String, String> data) {
@@ -83,7 +82,17 @@ public class NotificationService {
     }
 
     /**
-     * 미읽은 알림 수 조회
+     * 알림 삭제
+     */
+    @Transactional
+    public void deleteNotification(Long notificationId) {
+        Notification notification = notificationRepository.findById(notificationId)
+                .orElseThrow(() -> new BusinessException(ErrorCode.NOTIFICATION_NOT_FOUND));
+        notificationRepository.delete(notification);
+    }
+
+    /**
+     * 읽지 않은 알림 수 조회
      */
     @Transactional(readOnly = true)
     public long getUnreadCount(Long receiverId) {

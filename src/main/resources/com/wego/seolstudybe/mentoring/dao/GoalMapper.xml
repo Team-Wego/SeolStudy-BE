@@ -10,7 +10,7 @@
 
         <collection property="worksheetFiles" ofType="com.wego.seolstudybe.mentoring.dto.WorksheetFileResponse">
             <id column="worksheet_id" property="worksheetId"/>
-            <result column="worksheet_name" property="name"/>
+            <result column="worksheet_name" property="worksheetName"/>
             <result column="url" property="url"/>
             <result column="size" property="size"/>
             <result column="type" property="type"/>

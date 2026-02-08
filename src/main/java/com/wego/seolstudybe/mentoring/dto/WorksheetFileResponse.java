@@ -9,9 +9,13 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @NoArgsConstructor
 public class WorksheetFileResponse {
+    private int goalId;
+
+    private String goalName;
+
     private int worksheetId;
 
-    private String name;
+    private String worksheetName;
 
     private String url;
 

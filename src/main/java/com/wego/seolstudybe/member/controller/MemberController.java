@@ -8,14 +8,10 @@ import com.wego.seolstudybe.member.dto.UpdateMemberRequest;
 import com.wego.seolstudybe.member.dto.UpdateMemoRequest;
 import com.wego.seolstudybe.member.service.MemberService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.PutMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 @RestController
 @RequestMapping("/members")
@@ -36,10 +32,12 @@ public class MemberController {
         return ResponseEntity.ok(response);
     }
 
-    @PutMapping("/{id}")
-    public ResponseEntity<MemberResponse> updateMember(@PathVariable int id,
-                                                       @RequestBody UpdateMemberRequest request) {
-        MemberResponse response = memberService.updateMember(id, request);
+    @PutMapping(consumes = {MediaType.MULTIPART_FORM_DATA_VALUE})
+    public ResponseEntity<MemberResponse> updateMember(@CookieValue("memberId") final int memberId,
+                                                       @RequestPart(value = "file", required = false) final MultipartFile file,
+                                                       @RequestPart("request") UpdateMemberRequest request) {
+        MemberResponse response = memberService.updateMember(memberId, file, request);
+
         return ResponseEntity.ok(response);
     }
 

@@ -11,4 +11,5 @@ public class UpdateMemberRequest {
     private String name;
     private Grade grade;
     private String goalUniversity;
+    private boolean newProfileImage;
 }
