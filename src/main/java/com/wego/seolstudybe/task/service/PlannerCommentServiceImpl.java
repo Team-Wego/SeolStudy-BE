@@ -14,11 +14,13 @@ import com.wego.seolstudybe.task.entity.Planner;
 import com.wego.seolstudybe.task.exception.PlannerNotFoundException;
 import com.wego.seolstudybe.task.repository.PlannerRepository;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Map;
 
+@Slf4j
 @Service
 @RequiredArgsConstructor
 @Transactional(readOnly = true)
@@ -78,12 +80,16 @@ public class PlannerCommentServiceImpl implements PlannerCommentService {
 
         planner.complete();
 
-        // 담당 멘토에게 알림 전송
-        Member mentee = planner.getMentee();
+        // 담당 멘토에게 알림 전송 - lazy proxy 이슈 방지를 위해 명시적 로딩
+        Member mentee = memberRepository.findById(menteeId)
+                .orElseThrow(MemberNotFoundException::new);
+
         if (mentee.getMentor() != null) {
             Long mentorId = (long) mentee.getMentor().getId();
             String title = mentee.getName() + "님이 플래너를 마감했습니다";
             String body = planner.getDate() + " 플래너가 마감되었습니다.";
+
+            log.info("플래너 마감 알림 전송: menteeId={}, mentorId={}, date={}", menteeId, mentorId, planner.getDate());
 
             notificationService.notify(
                     mentorId,
@@ -97,6 +103,8 @@ public class PlannerCommentServiceImpl implements PlannerCommentService {
                             "date", planner.getDate().toString()
                     )
             );
+        } else {
+            log.warn("플래너 마감 알림 전송 실패: menteeId={} 에 담당 멘토가 없습니다.", menteeId);
         }
 
         return PlannerCommentResponse.from(planner);
