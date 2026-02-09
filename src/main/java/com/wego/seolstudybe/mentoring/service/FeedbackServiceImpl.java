@@ -1,24 +1,15 @@
 package com.wego.seolstudybe.mentoring.service;
 
-import com.wego.seolstudybe.common.error.ErrorCode;
-import com.wego.seolstudybe.common.error.exception.BusinessException;
 import com.wego.seolstudybe.common.service.S3Service;
 import com.wego.seolstudybe.member.entity.Member;
 import com.wego.seolstudybe.member.entity.enums.Role;
 import com.wego.seolstudybe.member.exception.MemberNotFoundException;
 import com.wego.seolstudybe.member.repository.MemberRepository;
-import com.wego.seolstudybe.mentoring.dto.CreateFeedbackRequest;
-import com.wego.seolstudybe.mentoring.dto.DailyFeedbackCountResponse;
-import com.wego.seolstudybe.mentoring.dto.FeedbackImageResponse;
-import com.wego.seolstudybe.mentoring.dto.FeedbackListResponse;
-import com.wego.seolstudybe.mentoring.dto.FeedbackResponse;
+import com.wego.seolstudybe.mentoring.dto.*;
 import com.wego.seolstudybe.mentoring.entity.Feedback;
 import com.wego.seolstudybe.mentoring.entity.FeedbackImage;
 import com.wego.seolstudybe.mentoring.entity.enums.FeedbackType;
-import com.wego.seolstudybe.mentoring.exception.FeedbackAccessDeniedException;
-import com.wego.seolstudybe.mentoring.exception.FeedbackAlreadyExistException;
-import com.wego.seolstudybe.mentoring.exception.FeedbackNotFoundException;
-import com.wego.seolstudybe.mentoring.exception.TaskIdRequiredException;
+import com.wego.seolstudybe.mentoring.exception.*;
 import com.wego.seolstudybe.mentoring.repository.FeedbackImageRepository;
 import com.wego.seolstudybe.mentoring.repository.FeedbackRepository;
 import com.wego.seolstudybe.notification.entity.enums.NotificationType;
@@ -170,6 +161,66 @@ public class FeedbackServiceImpl implements FeedbackService {
                 .collect(Collectors.toList());
 
         return FeedbackResponse.of(feedback, feedbackImages);
+    }
+
+    @Transactional
+    @Override
+    public Feedback updateFeedback(final int memberId, final int feedbackId, final UpdateFeedbackRequest request,
+                                   final List<MultipartFile> files) {
+        final Member member = findMemberById(memberId);
+
+        final Feedback feedback = findFeedbackById(feedbackId);
+
+        if (member.getRole().equals(Role.MENTEE) || feedback.getMentor().getId() != member.getId()) {
+            throw new FeedbackAccessDeniedException();
+        }
+
+        feedback.updateFeedback(request.getContent());
+
+        if (request.isImageChanged()) {
+            updateFeedbackImages(files, feedback, request.getDeletedImageIds());
+        }
+
+        return feedback;
+    }
+
+    @Transactional
+    @Override
+    public void deleteFeedback(final int memberId, final int feedbackId) {
+        final Member member = findMemberById(memberId);
+
+        final Feedback feedback = findFeedbackById(feedbackId);
+
+        if (member.getRole().equals(Role.MENTEE) || feedback.getMentor().getId() != member.getId()) {
+            throw new FeedbackAccessDeniedException();
+        }
+
+        deleteFeedbackImages(feedbackImageRepository.findByFeedbackId(feedbackId));
+
+        feedbackRepository.delete(feedback);
+    }
+
+    private void updateFeedbackImages(final List<MultipartFile> files, final Feedback feedback,
+                                      final List<Integer> deletedImageIds) {
+        if (files != null && !files.isEmpty()) {
+            uploadFiles(files, feedback);
+        }
+
+        if (deletedImageIds != null) {
+            final List<FeedbackImage> images = feedbackImageRepository.findByIdIn(deletedImageIds);
+
+            deleteFeedbackImages(images);
+        }
+    }
+
+    private void deleteFeedbackImages(final List<FeedbackImage> feedbackImages) {
+        feedbackImages.forEach(feedbackImage -> s3Service.deleteFile(feedbackImage.getUrl()));
+
+        feedbackImageRepository.deleteAll(feedbackImages);
+    }
+
+    private Feedback findFeedbackById(final int feedbackId) {
+        return feedbackRepository.findById(feedbackId).orElseThrow(FeedbackNotFoundException::new);
     }
 
     private void validateMenteeAccess(final Member member, final int menteeId) {

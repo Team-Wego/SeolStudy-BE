@@ -7,4 +7,6 @@ import java.util.List;
 
 public interface FeedbackImageRepository extends JpaRepository<FeedbackImage, Integer> {
     List<FeedbackImage> findByFeedbackId(final int feedbackId);
+
+    List<FeedbackImage> findByIdIn(final List<Integer> ids);
 }
