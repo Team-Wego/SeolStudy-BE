@@ -43,6 +43,7 @@ public enum ErrorCode {
     FEEDBACK_NOT_FOUND(HttpStatus.NOT_FOUND, "FEEDBACK002", "피드백 데이터를 찾을 수 없습니다."),
     FEEDBACK_ACCESS_DENIED(HttpStatus.FORBIDDEN, "FEEDBACK003", "피드백 데이터를 접근할 권한이 없습니다."),
     FEEDBACK_ALREADY_EXIST(HttpStatus.CONFLICT, "FEEDBACK004", "이미 피드백이 등록되어있습니다."),
+    FEEDBACK_MENTEE_ID_REQUIRED(HttpStatus.BAD_REQUEST, "FEEDBACK005", "멘토는 멘티의 ID(PK) 값을 지정해야 합니다."),
 
     /* TASK */
     TASK_NOT_FOUND(HttpStatus.NOT_FOUND, "TASK001", "과제가 존재하지 않습니다."),

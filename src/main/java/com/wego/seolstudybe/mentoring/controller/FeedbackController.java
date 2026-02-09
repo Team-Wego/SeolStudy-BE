@@ -1,9 +1,6 @@
 package com.wego.seolstudybe.mentoring.controller;
 
-import com.wego.seolstudybe.mentoring.dto.CreateFeedbackRequest;
-import com.wego.seolstudybe.mentoring.dto.DailyFeedbackCountResponse;
-import com.wego.seolstudybe.mentoring.dto.FeedbackListResponse;
-import com.wego.seolstudybe.mentoring.dto.FeedbackResponse;
+import com.wego.seolstudybe.mentoring.dto.*;
 import com.wego.seolstudybe.mentoring.entity.Feedback;
 import com.wego.seolstudybe.mentoring.entity.enums.FeedbackType;
 import com.wego.seolstudybe.mentoring.service.FeedbackService;
@@ -31,6 +28,17 @@ public class FeedbackController {
                                                   @Valid @RequestPart(name = "request") final CreateFeedbackRequest request,
                                                   @RequestPart(name = "files", required = false) final List<MultipartFile> files) {
         final Feedback feedback = feedbackService.createFeedback(memberId, request, files);
+
+        return ResponseEntity.ok(feedback.getId());
+    }
+
+    @Operation(summary = "피드백 수정")
+    @PutMapping(value = "/mentors/feedback/{feedbackId}", consumes = {MediaType.MULTIPART_FORM_DATA_VALUE})
+    public ResponseEntity<Integer> updateFeedback(@CookieValue("memberId") final int memberId,
+                                                  @PathVariable("feedbackId") final int feedbackId,
+                                                  @Valid @RequestPart(name = "request") final UpdateFeedbackRequest request,
+                                                  @RequestPart(name = "files", required = false) final List<MultipartFile> files) {
+        final Feedback feedback = feedbackService.updateFeedback(memberId, feedbackId, request, files);
 
         return ResponseEntity.ok(feedback.getId());
     }
