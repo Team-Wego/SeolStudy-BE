@@ -1,0 +1,22 @@
+spring:
+  data:
+    mongodb:
+      uri: ${MONGODB_URI}
+
+  datasource:
+    url: ${DB_URL}
+    username: ${DB_USERNAME}
+    password: ${DB_PASSWORD}
+
+cloud:
+  aws:
+    credentials:
+      access-key: ${AWS_ACCESS_KEY}
+      secret-key: ${AWS_SECRET_KEY}
+
+firebase:
+  config-path: /home/ec2-user/backend/seol-study-firebase-adminsdk-fbsvc-c75e7d0e06.json
+  web:
+    api-key: ${FIREBASE_API_KEY}
+    app-id: ${FIREBASE_APP_ID}
+    vapid-key: ${FIREBASE_VAPID_KEY}
