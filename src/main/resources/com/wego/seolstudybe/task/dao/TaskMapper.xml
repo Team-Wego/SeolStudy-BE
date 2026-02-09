@@ -107,7 +107,8 @@
         SELECT
             A.id,
             A.date,
-            A.comment
+            A.comment,
+            A.completed_at AS completedAt
         FROM planner A
         WHERE A.mentee_id = #{menteeId}
           AND A.date = #{date}

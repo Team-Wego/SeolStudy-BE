@@ -37,4 +37,11 @@ public class Planner {
         this.comment = comment;
     }
 
+    public void complete() {
+        this.completedAt = LocalDateTime.now();
+    }
+
+    public boolean isCompleted() {
+        return this.completedAt != null;
+    }
 }
