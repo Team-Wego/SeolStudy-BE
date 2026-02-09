@@ -25,6 +25,8 @@ public class FeedbackResponse {
 
     private String content;
 
+    private String highlight;
+
     private FeedbackType feedbackType;
 
     private LocalDateTime createdAt;
@@ -41,6 +43,7 @@ public class FeedbackResponse {
                 .menteeId(feedback.getMentee().getId())
                 .menteeName(feedback.getMentee().getName())
                 .content(feedback.getContent())
+                .highlight(feedback.getHighlight())
                 .mentorId(feedback.getMentor().getId())
                 .mentorName(feedback.getMentor().getName())
                 .createdAt(feedback.getCreatedAt())

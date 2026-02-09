@@ -1,10 +1,12 @@
 package com.wego.seolstudybe.common.controller;
 
 import com.wego.seolstudybe.common.service.S3Service;
+import com.wego.seolstudybe.file.dto.PresignedGetUrlRequest;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
@@ -83,6 +85,14 @@ public class FileUploadController {
         log.info("파일 삭제 요청: fileUrl={}", fileUrl);
         s3Service.deleteFile(fileUrl);
         return ResponseEntity.ok().build();
+    }
+
+    @Operation(summary = "다운로드용 S3 Prsigned Get Url 발급")
+    @PostMapping("/presigned-get-url")
+    public ResponseEntity<String> createPresignedGetUrl(@Valid @RequestBody final PresignedGetUrlRequest request) {
+        final String presignedGetUrl = s3Service.createPresignedGetUrl(request.getS3Url(), request.getFileName());
+
+        return ResponseEntity.ok(presignedGetUrl);
     }
 
     /**

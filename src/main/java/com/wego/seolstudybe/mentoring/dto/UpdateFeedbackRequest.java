@@ -16,6 +16,9 @@ public class UpdateFeedbackRequest {
     @NotBlank
     private String content;
 
+    @Schema(description = "강조하고 싶은 내용(형광펜)")
+    private String highlight;
+
     @Schema(description = "첨부 파일 변경 여부")
     private boolean imageChanged;
 

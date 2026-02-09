@@ -10,9 +10,14 @@ import org.springframework.web.multipart.MultipartFile;
 import software.amazon.awssdk.core.sync.RequestBody;
 import software.amazon.awssdk.services.s3.S3Client;
 import software.amazon.awssdk.services.s3.model.DeleteObjectRequest;
+import software.amazon.awssdk.services.s3.model.GetObjectRequest;
 import software.amazon.awssdk.services.s3.model.PutObjectRequest;
+import software.amazon.awssdk.services.s3.presigner.S3Presigner;
+import software.amazon.awssdk.services.s3.presigner.model.GetObjectPresignRequest;
+import software.amazon.awssdk.services.s3.presigner.model.PresignedGetObjectRequest;
 
 import java.io.IOException;
+import java.time.Duration;
 import java.util.Set;
 import java.util.UUID;
 
@@ -20,8 +25,8 @@ import java.util.UUID;
 @Service
 @RequiredArgsConstructor
 public class S3Service {
-
     private final S3Client s3Client;
+    private final S3Presigner s3Presigner;
 
     @Value("${cloud.aws.s3.bucket}")
     private String bucket;
@@ -48,7 +53,8 @@ public class S3Service {
 
     /**
      * 파일 업로드
-     * @param file 업로드할 파일
+     *
+     * @param file   업로드할 파일
      * @param folder 저장할 폴더 (예: "chat")
      * @return 업로드된 파일의 URL
      */
@@ -85,6 +91,7 @@ public class S3Service {
 
     /**
      * 파일 삭제
+     *
      * @param fileUrl 삭제할 파일의 URL
      */
     public void deleteFile(String fileUrl) {
@@ -106,6 +113,33 @@ public class S3Service {
             log.error("S3 파일 삭제 실패: {}", e.getMessage());
             throw new FileUploadException(ErrorCode.FILE_DELETE_FAILED);
         }
+    }
+
+    public String createPresignedGetUrl(final String fileUrl, final String fileName) {
+        final String key = extractFileName(fileUrl);
+
+        String originalFileName;
+
+        if (fileName != null && !fileName.isEmpty()) {
+            originalFileName = fileName;
+        } else {
+            originalFileName = key.contains("/") ? key.substring(key.lastIndexOf('/') + 1) : key;
+        }
+
+        final GetObjectRequest objectRequest = GetObjectRequest.builder()
+                .bucket(bucket)
+                .key(key)
+                .responseContentDisposition("attachment; filename=\"" + originalFileName + "\"")
+                .build();
+
+        final GetObjectPresignRequest presignRequest = GetObjectPresignRequest.builder()
+                .signatureDuration(Duration.ofMinutes(10))
+                .getObjectRequest(objectRequest)
+                .build();
+
+        final PresignedGetObjectRequest presignedGetObjectRequest = s3Presigner.presignGetObject(presignRequest);
+
+        return presignedGetObjectRequest.url().toExternalForm();
     }
 
     /**

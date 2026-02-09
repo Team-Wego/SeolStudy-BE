@@ -70,6 +70,7 @@ public class FeedbackServiceImpl implements FeedbackService {
                 .type(request.getType())
                 .targetDate(request.getTargetDate())
                 .content(request.getContent())
+                .highlight(request.getHighlight())
                 .createdAt(LocalDateTime.now())
                 .build();
 
@@ -175,7 +176,7 @@ public class FeedbackServiceImpl implements FeedbackService {
             throw new FeedbackAccessDeniedException();
         }
 
-        feedback.updateFeedback(request.getContent());
+        feedback.updateFeedback(request.getContent(), request.getHighlight());
 
         if (request.isImageChanged()) {
             updateFeedbackImages(files, feedback, request.getDeletedImageIds());
