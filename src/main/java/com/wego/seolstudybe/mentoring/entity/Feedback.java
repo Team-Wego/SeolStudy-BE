@@ -44,11 +44,15 @@ public class Feedback {
     @Column(nullable = false, columnDefinition = "TEXT")
     private String content;
 
+    @Column
+    private String highlight;
+
     @CreatedDate
     @Column(name = "created_at", nullable = false, updatable = false)
     private LocalDateTime createdAt;
 
-    public void updateFeedback(final String content) {
+    public void updateFeedback(final String content, final String highlight) {
         this.content = content;
+        this.highlight = highlight;
     }
 }

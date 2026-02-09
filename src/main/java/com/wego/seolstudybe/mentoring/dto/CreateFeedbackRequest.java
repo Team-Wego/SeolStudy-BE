@@ -32,4 +32,7 @@ public class CreateFeedbackRequest {
 
     @Schema(description = "과제 ID (피드백 구분이 TASK일 때)")
     private Integer taskId;
+
+    @Schema(description = "강조하고 싶은 내용(형광펜)")
+    private String highlight;
 }
