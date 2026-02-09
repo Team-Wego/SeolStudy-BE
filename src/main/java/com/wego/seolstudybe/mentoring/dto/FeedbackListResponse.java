@@ -21,6 +21,7 @@ public class FeedbackListResponse {
     private LocalDateTime createdAt;
     private LocalDate targetDate;
     private String content;
+    private String highlight;
 
     public static FeedbackListResponse of(final Feedback feedback) {
         return FeedbackListResponse.builder()
@@ -33,6 +34,7 @@ public class FeedbackListResponse {
                 .createdAt(feedback.getCreatedAt())
                 .targetDate(feedback.getTargetDate())
                 .content(feedback.getContent())
+                .highlight(feedback.getHighlight())
                 .build();
     }
 }
