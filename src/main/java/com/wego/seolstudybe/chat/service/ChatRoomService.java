@@ -62,8 +62,19 @@ public class ChatRoomService {
 
     /**
      * 멘토의 채팅방 목록 조회
+     * - 배정된 멘티 중 채팅방이 없는 멘티가 있으면 자동 생성
      */
     public List<ChatRoomResponseDTO> getMentorChatRooms(Long mentorId) {
+        // 배정된 멘티 목록 조회 후 채팅방이 없으면 자동 생성
+        List<Member> assignedMentees = memberRepository.findByMentorId(mentorId.intValue());
+        for (Member mentee : assignedMentees) {
+            Long menteeId = (long) mentee.getId();
+            Optional<ChatRoom> existing = chatRoomRepository.findByMentorIdAndMenteeId(mentorId, menteeId);
+            if (existing.isEmpty()) {
+                createOrGetChatRoom(mentorId, menteeId);
+            }
+        }
+
         return chatRoomRepository.findByMentorIdOrderByLastMessageAtDesc(mentorId)
                 .stream()
                 .map(this::toResponseWithNames)
@@ -72,10 +83,22 @@ public class ChatRoomService {
 
     /**
      * 멘티의 채팅방 목록 조회
+     * - 기존 채팅방이 없으면 mentor_id 기반으로 자동 생성
      */
     public List<ChatRoomResponseDTO> getMenteeChatRooms(Long menteeId) {
-        return chatRoomRepository.findByMenteeIdOrderByLastMessageAtDesc(menteeId)
-                .stream()
+        List<ChatRoom> rooms = chatRoomRepository.findByMenteeIdOrderByLastMessageAtDesc(menteeId);
+
+        // 기존 채팅방이 없으면 DB의 mentor_id를 확인하여 자동 생성
+        if (rooms.isEmpty()) {
+            Optional<Member> mentee = memberRepository.findById(menteeId.intValue());
+            if (mentee.isPresent() && mentee.get().getMentor() != null) {
+                Long mentorId = (long) mentee.get().getMentor().getId();
+                ChatRoomResponseDTO newRoom = createOrGetChatRoom(mentorId, menteeId);
+                return List.of(newRoom);
+            }
+        }
+
+        return rooms.stream()
                 .map(this::toResponseWithNames)
                 .toList();
     }
