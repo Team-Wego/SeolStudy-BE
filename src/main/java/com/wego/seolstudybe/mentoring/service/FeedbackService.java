@@ -22,4 +22,6 @@ public interface FeedbackService {
 
     Feedback updateFeedback(final int memberId, final int feedbackId, final UpdateFeedbackRequest request,
                             final List<MultipartFile> files);
+
+    void deleteFeedback(final int memberId, final int feedbackId);
 }

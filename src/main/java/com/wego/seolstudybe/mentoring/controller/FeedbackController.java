@@ -43,6 +43,15 @@ public class FeedbackController {
         return ResponseEntity.ok(feedback.getId());
     }
 
+    @Operation(summary = "피드백 삭제")
+    @DeleteMapping("/mentors/feedback/{feedbackId}")
+    public ResponseEntity<Integer> deleteFeedback(@CookieValue("memberId") final int memberId,
+                                                  @PathVariable("feedbackId") final int feedbackId) {
+        feedbackService.deleteFeedback(memberId, feedbackId);
+
+        return ResponseEntity.noContent().build();
+    }
+
     @Operation(summary = "피드백 분류별 목록 조회")
     @GetMapping("/feedback")
     public ResponseEntity<List<FeedbackListResponse>> getFeedbackList(@CookieValue("memberId") final int memberId,

@@ -188,6 +188,22 @@ public class FeedbackServiceImpl implements FeedbackService {
         return feedback;
     }
 
+    @Transactional
+    @Override
+    public void deleteFeedback(final int memberId, final int feedbackId) {
+        final Member member = findMemberById(memberId);
+
+        final Feedback feedback = findFeedbackById(feedbackId);
+
+        if (member.getRole().equals(Role.MENTEE) || feedback.getMentor().getId() != member.getId()) {
+            throw new FeedbackAccessDeniedException();
+        }
+
+        deleteFeedbackImages(feedbackImageRepository.findByFeedbackId(feedbackId));
+
+        feedbackRepository.delete(feedback);
+    }
+
     private void updateFeedbackImages(final List<MultipartFile> files, final Feedback feedback,
                                       final List<Integer> deletedImageIds) {
         if (files != null && !files.isEmpty()) {
