@@ -14,6 +14,7 @@ import java.time.LocalDateTime;
 public class FeedbackListResponse {
     private int feedbackId;
     private FeedbackType feedbackType;
+    private Integer taskId;
     private Subject subject;
     private String goalName;
     private String taskTitle;
@@ -27,6 +28,7 @@ public class FeedbackListResponse {
         return FeedbackListResponse.builder()
                 .feedbackId(feedback.getId())
                 .feedbackType(feedback.getType())
+                .taskId(feedback.getTask() != null ? feedback.getTask().getId() : null)
                 .subject(feedback.getTask() != null ? feedback.getTask().getSubject() : null)
                 .goalName(feedback.getTask() != null && feedback.getTask().getGoal() != null ? feedback.getTask().getGoal().getName() : null)
                 .taskTitle(feedback.getTask() != null ? feedback.getTask().getTitle() : null)
