@@ -5,6 +5,8 @@ import com.wego.seolstudybe.chat.dto.ChatMessageResponseDTO;
 import com.wego.seolstudybe.chat.dto.ChatRoomResponseDTO;
 import com.wego.seolstudybe.chat.service.ChatMessageService;
 import com.wego.seolstudybe.chat.service.ChatRoomService;
+import com.wego.seolstudybe.member.entity.Member;
+import com.wego.seolstudybe.member.repository.MemberRepository;
 import com.wego.seolstudybe.notification.entity.enums.NotificationType;
 import com.wego.seolstudybe.notification.service.NotificationService;
 import lombok.RequiredArgsConstructor;
@@ -25,6 +27,7 @@ public class ChatMessageController {
     private final ChatRoomService chatRoomService;
     private final SimpMessagingTemplate messagingTemplate;
     private final NotificationService notificationService;
+    private final MemberRepository memberRepository;
 
     /**
      * 메시지 전송
@@ -49,14 +52,19 @@ public class ChatMessageController {
                 ? roomInfo.getMenteeId()
                 : roomInfo.getMentorId();
 
+        String senderName = memberRepository.findById(request.getSenderId().intValue())
+                .map(Member::getName)
+                .orElse("상대방");
+
         notificationService.notify(
                 receiverId,
                 NotificationType.CHAT,
-                "새 메시지가 도착했습니다",
+                senderName + "님이 메시지를 보냈습니다",
                 response.getContent() != null && !response.getContent().isBlank()
                         ? response.getContent() : "파일을 보냈습니다.",
                 Map.of("type", "CHAT", "roomId", request.getRoomId(),
-                        "senderId", String.valueOf(request.getSenderId()))
+                        "senderId", String.valueOf(request.getSenderId()),
+                        "senderName", senderName)
         );
 
         log.info("메시지 전송 완료: roomId={}, receiverId={}", request.getRoomId(), receiverId);
