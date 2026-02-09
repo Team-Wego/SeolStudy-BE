@@ -9,6 +9,7 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 public class MenteeSubmissionSummaryResponse {
     private int menteeId;
+    private String profileUrl;
     private String menteeName;
     private int assignedCount;
     private int submittedCount;

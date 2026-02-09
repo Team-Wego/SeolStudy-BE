@@ -136,6 +136,7 @@ public class MentorTaskServiceImpl implements MentorTaskService{
 
                     return new MenteeSubmissionSummaryResponse(
                             mentee.getId(),
+                            mentee.getProfileUrl(),
                             mentee.getName(),
                             assignedCount,
                             submittedCount
@@ -162,7 +163,8 @@ public class MentorTaskServiceImpl implements MentorTaskService{
                         task.getSubmittedAt(),
                         task.getMentee().getName(),
                         task.getType(),
-                        task.getSubject()
+                        task.getSubject(),
+                        task.getMentee().getProfileUrl()
                 ))
                 .toList();
     }
