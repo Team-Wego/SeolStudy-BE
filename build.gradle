@@ -37,6 +37,18 @@ dependencies {
     /* Database */
     runtimeOnly 'com.mysql:mysql-connector-j'
 
+    /* MongoDB */
+    implementation 'org.springframework.boot:spring-boot-starter-data-mongodb'
+
+    /* WebSocket */
+    implementation 'org.springframework.boot:spring-boot-starter-websocket'
+
+    /* Firebase Admin SDK */
+    implementation 'com.google.firebase:firebase-admin:9.2.0'
+
+    /* AWS S3 */
+    implementation 'software.amazon.awssdk:s3:2.25.11'
+
     /* Lombok */
     compileOnly 'org.projectlombok:lombok'
     annotationProcessor 'org.projectlombok:lombok'
@@ -58,4 +70,8 @@ dependencies {
 
 tasks.named('test') {
     useJUnitPlatform()
+}
+
+jar {
+    enabled = false
 }
