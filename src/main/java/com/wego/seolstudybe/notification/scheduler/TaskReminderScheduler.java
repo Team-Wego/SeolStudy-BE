@@ -12,7 +12,6 @@ import org.springframework.stereotype.Component;
 import java.time.LocalDate;
 import java.util.List;
 import java.util.Map;
-import java.util.stream.Collectors;
 
 @Slf4j
 @Component
@@ -24,31 +23,32 @@ public class TaskReminderScheduler {
 
     @Scheduled(cron = "0 0 0 * * *", zone = "Asia/Seoul")
     public void sendTaskReminder() {
-        LocalDate today = LocalDate.now();
-        List<Task> uncompletedTasks = taskRepository.findByDateAndIsCheckedFalse(today);
+        sendTaskReminderForDate(LocalDate.now());
+    }
+
+    public void sendTaskReminderForDate(LocalDate date) {
+        List<Task> uncompletedTasks = taskRepository.findByDateAndIsCheckedFalse(date);
 
         if (uncompletedTasks.isEmpty()) {
-            log.info("오늘 미완료 과제가 없습니다.");
+            log.info("{} 미완료 과제가 없습니다.", date);
             return;
         }
 
-        // 멘티별로 그룹핑
-        Map<Integer, List<Task>> tasksByMentee = uncompletedTasks.stream()
-                .collect(Collectors.groupingBy(task -> task.getMentee().getId()));
-
-        tasksByMentee.forEach((menteeId, tasks) -> {
+        // 과제별 개별 알림 전송
+        for (Task task : uncompletedTasks) {
+            int menteeId = task.getMentee().getId();
             String title = "과제 리마인더";
-            String body = "아직 완료하지 않은 과제가 " + tasks.size() + "개 있습니다.";
+            String body = "미완료 과제: " + task.getTitle();
 
             notificationService.notify(
                     (long) menteeId,
                     NotificationType.TASK_REMINDER,
                     title,
                     body,
-                    Map.of("taskCount", String.valueOf(tasks.size()), "date", today.toString())
+                    Map.of("taskId", String.valueOf(task.getId()), "date", date.toString())
             );
 
-            log.info("과제 리마인더 전송: menteeId={}, taskCount={}", menteeId, tasks.size());
-        });
+            log.info("과제 리마인더 전송: menteeId={}, taskId={}, title={}", menteeId, task.getId(), task.getTitle());
+        }
     }
 }
