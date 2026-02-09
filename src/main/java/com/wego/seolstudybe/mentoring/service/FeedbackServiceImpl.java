@@ -135,7 +135,11 @@ public class FeedbackServiceImpl implements FeedbackService {
                 : feedbackRepository.findByMenteeIdOrderByCreatedAtDesc(menteeId);
 
         return feedbacks.stream()
-                .map(FeedbackListResponse::of)
+                .map(f -> {
+                    final List<FeedbackImageResponse> images = feedbackImageRepository.findByFeedbackId(f.getId())
+                            .stream().map(FeedbackImageResponse::of).collect(Collectors.toList());
+                    return FeedbackListResponse.of(f, images);
+                })
                 .collect(Collectors.toList());
     }
 

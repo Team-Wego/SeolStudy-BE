@@ -8,6 +8,7 @@ import lombok.Getter;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.util.List;
 
 @Builder
 @Getter
@@ -23,8 +24,9 @@ public class FeedbackListResponse {
     private LocalDate targetDate;
     private String content;
     private String highlight;
+    private List<FeedbackImageResponse> feedbackImages;
 
-    public static FeedbackListResponse of(final Feedback feedback) {
+    public static FeedbackListResponse of(final Feedback feedback, final List<FeedbackImageResponse> feedbackImages) {
         return FeedbackListResponse.builder()
                 .feedbackId(feedback.getId())
                 .feedbackType(feedback.getType())
@@ -37,6 +39,7 @@ public class FeedbackListResponse {
                 .targetDate(feedback.getTargetDate())
                 .content(feedback.getContent())
                 .highlight(feedback.getHighlight())
+                .feedbackImages(feedbackImages)
                 .build();
     }
 }
