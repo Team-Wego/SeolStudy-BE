@@ -7,8 +7,8 @@ import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.CookieValue;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -22,7 +22,7 @@ public class WorksheetFileController {
 
     @Operation(summary = "멘티/키워드/과목별 학습지 조회")
     @GetMapping("/mentees/{menteeId}/worksheets")
-    public ResponseEntity<List<WorksheetFileResponse>> getWorksheetFiles(@RequestParam("menteeId") final int menteeId,
+    public ResponseEntity<List<WorksheetFileResponse>> getWorksheetFiles(@PathVariable("menteeId") final int menteeId,
                                                                          @RequestParam(value = "keyword", required = false)final String keyword,
                                                                          @RequestParam(value = "subject", required = false) final Subject subject) {
         List<WorksheetFileResponse> responses = worksheetFileService.getWorksheetFiles(menteeId, keyword, subject);

@@ -5,6 +5,7 @@ import com.wego.seolstudybe.member.exception.MemberNotFoundException;
 import com.wego.seolstudybe.member.repository.MemberRepository;
 import com.wego.seolstudybe.mentoring.entity.Goal;
 import com.wego.seolstudybe.mentoring.repository.GoalRepository;
+import com.wego.seolstudybe.task.dto.request.TaskCommentUpdateRequest;
 import com.wego.seolstudybe.task.dto.request.TaskCreateRequest;
 import com.wego.seolstudybe.task.dto.request.TaskSequenceUpdateRequest;
 import com.wego.seolstudybe.task.dto.request.TaskStatusUpdateRequest;
@@ -112,6 +113,14 @@ public class MenteeTaskServiceImpl implements MenteeTaskService {
     public TaskResponse updateTaskStatus(int memberId, int taskId, TaskStatusUpdateRequest request) {
         Task task = findTaskByIdAndMemberId(taskId, memberId);
         task.changeStatus(request.getIsChecked());
+        return TaskResponse.from(task);
+    }
+
+    @Override
+    @Transactional
+    public TaskResponse updateTaskComment(int memberId, int taskId, TaskCommentUpdateRequest request) {
+        Task task = findTaskByIdAndMemberId(taskId, memberId);
+        task.updateComment(request.getComment());
         return TaskResponse.from(task);
     }
 
