@@ -153,17 +153,12 @@ public class FeedbackServiceImpl implements FeedbackService {
 
     @Transactional(readOnly = true)
     @Override
-    public FeedbackResponse getPlannerFeedback(final int memberId, final Integer menteeId, final LocalDate date) {
+    public FeedbackResponse getPlannerFeedback(final int memberId, final int menteeId, final LocalDate date) {
         final Member member = findMemberById(memberId);
-
-        if (member.getRole().equals(Role.MENTOR) && menteeId == null) {
-            // TODO 커스텀 에러로 변경
-            throw new BusinessException(ErrorCode.BAD_REQUEST, "멘토는 멘티의 ID(PK) 값을 지정해야 합니다.");
-        }
 
         validateMenteeAccess(member, menteeId);
 
-        final Feedback feedback = feedbackRepository.findByTargetDateAndMenteeId(date, menteeId);
+        final Feedback feedback = feedbackRepository.findByTargetDateAndMenteeIdAndType(date, menteeId, FeedbackType.PLANNER);
 
         if (feedback == null) {
             return null;

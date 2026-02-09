@@ -21,5 +21,5 @@ public interface FeedbackService {
     List<DailyFeedbackCountResponse> getDailyFeedbackCount(final int memberId, final int menteeId,
                                                            final LocalDate startDate, final LocalDate endDate);
 
-    FeedbackResponse getPlannerFeedback(final int memberId, final Integer menteeId, final LocalDate date);
+    FeedbackResponse getPlannerFeedback(final int memberId, final int menteeId, final LocalDate date);
 }
