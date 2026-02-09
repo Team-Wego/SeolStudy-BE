@@ -1,6 +1,7 @@
 package com.wego.seolstudybe.notification.controller;
 
 import com.wego.seolstudybe.notification.dto.NotificationResponseDTO;
+import com.wego.seolstudybe.notification.scheduler.TaskReminderScheduler;
 import com.wego.seolstudybe.notification.service.NotificationService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -8,9 +9,11 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.web.PageableDefault;
+import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.time.LocalDate;
 import java.util.Map;
 
 @Tag(name = "Notification", description = "알림 API")
@@ -20,6 +23,7 @@ import java.util.Map;
 public class NotificationRestController {
 
     private final NotificationService notificationService;
+    private final TaskReminderScheduler taskReminderScheduler;
 
     @Operation(summary = "알림 목록 조회", description = "사용자의 알림 목록을 페이징하여 조회합니다.")
     @GetMapping("/{memberId:\\d+}")
@@ -48,5 +52,13 @@ public class NotificationRestController {
     public ResponseEntity<Map<String, Long>> getUnreadCount(@PathVariable Long memberId) {
         long count = notificationService.getUnreadCount(memberId);
         return ResponseEntity.ok(Map.of("count", count));
+    }
+
+    @Operation(summary = "과제 리마인더 테스트", description = "특정 날짜의 미완료 과제 리마인더를 수동 전송합니다.")
+    @PostMapping("/test/task-reminder")
+    public ResponseEntity<Map<String, String>> testTaskReminder(
+            @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate date) {
+        taskReminderScheduler.sendTaskReminderForDate(date);
+        return ResponseEntity.ok(Map.of("message", date + " 과제 리마인더 전송 완료"));
     }
 }
