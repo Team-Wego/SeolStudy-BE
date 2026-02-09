@@ -1,5 +1,6 @@
 package com.wego.seolstudybe.task.dto.response;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
 import com.wego.seolstudybe.mentoring.entity.enums.Subject;
 import com.wego.seolstudybe.task.entity.enums.TaskType;
 import lombok.Builder;
@@ -17,6 +18,7 @@ public class TaskDetailResponse {
     private int id;
     private String title;
     private String description;
+    @JsonProperty("isChecked")
     private boolean isChecked;
     private Subject subject;
     private TaskType type;

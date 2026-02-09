@@ -11,4 +11,6 @@ public interface PlannerCommentService {
     PlannerCommentResponse updatePlannerComment(int menteeId, int plannerId, PlannerCommentUpdateRequest request);
 
     void deletePlannerComment(int menteeId, int plannerId);
+
+    PlannerCommentResponse completePlanner(int menteeId, int plannerId);
 }

@@ -50,4 +50,14 @@ public class PlannerCommentController {
         plannerCommentService.deletePlannerComment(menteeId, plannerId);
         return ResponseEntity.noContent().build();
     }
+
+    @PatchMapping("/{plannerId}/complete")
+    @Operation(summary = "플래너 마감 처리", description = "플래너를 마감 처리하고 담당 멘토에게 알림을 전송합니다.")
+    public ResponseEntity<PlannerCommentResponse> completePlanner(
+            @PathVariable("menteeId") int menteeId,
+            @PathVariable("plannerId") int plannerId
+    ) {
+        PlannerCommentResponse response = plannerCommentService.completePlanner(menteeId, plannerId);
+        return ResponseEntity.ok(response);
+    }
 }
