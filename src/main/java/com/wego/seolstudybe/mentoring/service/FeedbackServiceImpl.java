@@ -144,16 +144,12 @@ public class FeedbackServiceImpl implements FeedbackService {
 
     @Transactional(readOnly = true)
     @Override
-    public FeedbackResponse getPlannerFeedback(final int memberId, final Integer menteeId, final LocalDate date) {
+    public FeedbackResponse getPlannerFeedback(final int memberId, final int menteeId, final LocalDate date) {
         final Member member = findMemberById(memberId);
-
-        if (member.getRole().equals(Role.MENTOR) && menteeId == null) {
-            throw new FeedbackMenteeIdRequiredException();
-        }
 
         validateMenteeAccess(member, menteeId);
 
-        final Feedback feedback = feedbackRepository.findByTargetDateAndMenteeId(date, menteeId);
+        final Feedback feedback = feedbackRepository.findByTargetDateAndMenteeIdAndType(date, menteeId, FeedbackType.PLANNER);
 
         if (feedback == null) {
             return null;
