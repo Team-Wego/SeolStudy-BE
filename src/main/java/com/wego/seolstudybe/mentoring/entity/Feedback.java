@@ -47,4 +47,8 @@ public class Feedback {
     @CreatedDate
     @Column(name = "created_at", nullable = false, updatable = false)
     private LocalDateTime createdAt;
+
+    public void updateFeedback(final String content) {
+        this.content = content;
+    }
 }

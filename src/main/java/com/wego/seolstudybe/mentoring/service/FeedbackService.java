@@ -1,9 +1,6 @@
 package com.wego.seolstudybe.mentoring.service;
 
-import com.wego.seolstudybe.mentoring.dto.CreateFeedbackRequest;
-import com.wego.seolstudybe.mentoring.dto.DailyFeedbackCountResponse;
-import com.wego.seolstudybe.mentoring.dto.FeedbackListResponse;
-import com.wego.seolstudybe.mentoring.dto.FeedbackResponse;
+import com.wego.seolstudybe.mentoring.dto.*;
 import com.wego.seolstudybe.mentoring.entity.Feedback;
 import com.wego.seolstudybe.mentoring.entity.enums.FeedbackType;
 import org.springframework.web.multipart.MultipartFile;
@@ -22,4 +19,9 @@ public interface FeedbackService {
                                                            final LocalDate startDate, final LocalDate endDate);
 
     FeedbackResponse getPlannerFeedback(final int memberId, final Integer menteeId, final LocalDate date);
+
+    Feedback updateFeedback(final int memberId, final int feedbackId, final UpdateFeedbackRequest request,
+                            final List<MultipartFile> files);
+
+    void deleteFeedback(final int memberId, final int feedbackId);
 }
