@@ -7,10 +7,12 @@ import com.wego.seolstudybe.task.dto.response.MenteeSubmissionSummaryResponse;
 import com.wego.seolstudybe.task.dto.response.PendingFeedbackResponse;
 import com.wego.seolstudybe.task.dto.response.UpdateTaskResponse;
 
+import org.springframework.web.multipart.MultipartFile;
+
 import java.util.List;
 
 public interface MentorTaskService {
-    CreateTaskResponse createTask(int mentorId, int menteeId, CreateTaskRequest request);
+    CreateTaskResponse createTask(int mentorId, int menteeId, CreateTaskRequest request, List<MultipartFile> files);
 
     UpdateTaskResponse updateTask(int mentorId, int taskId, UpdateTaskRequest request);
 
