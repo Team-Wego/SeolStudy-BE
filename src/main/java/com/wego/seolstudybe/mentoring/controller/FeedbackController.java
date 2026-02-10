@@ -71,6 +71,15 @@ public class FeedbackController {
         return ResponseEntity.ok(response);
     }
 
+    @Operation(summary = "과제별 피드백 조회")
+    @GetMapping("/feedback/task/{taskId}")
+    public ResponseEntity<FeedbackResponse> getTaskFeedback(@CookieValue("memberId") final int memberId,
+                                                             @PathVariable("taskId") final int taskId) {
+        final FeedbackResponse response = feedbackService.getTaskFeedback(memberId, taskId);
+
+        return ResponseEntity.ok(response);
+    }
+
     @Operation(summary = "기간별 일일 피드백 개수 조회")
     @GetMapping("/feedback/daily-count")
     public ResponseEntity<List<DailyFeedbackCountResponse>> getDailyFeedbackCount(@CookieValue("memberId") final int memberId,

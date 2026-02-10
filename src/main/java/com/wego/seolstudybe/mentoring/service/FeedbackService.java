@@ -13,6 +13,8 @@ public interface FeedbackService {
 
     FeedbackResponse getFeedback(final int memberId, final int feedbackId);
 
+    FeedbackResponse getTaskFeedback(final int memberId, final int taskId);
+
     List<FeedbackListResponse> getFeedbackList(final int memberId, final int menteeId, final FeedbackType type);
 
     List<DailyFeedbackCountResponse> getDailyFeedbackCount(final int memberId, final int menteeId,

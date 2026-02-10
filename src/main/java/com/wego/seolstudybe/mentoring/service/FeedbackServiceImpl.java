@@ -125,6 +125,28 @@ public class FeedbackServiceImpl implements FeedbackService {
 
     @Transactional(readOnly = true)
     @Override
+    public FeedbackResponse getTaskFeedback(final int memberId, final int taskId) {
+        final Member member = findMemberById(memberId);
+
+        final Feedback feedback = feedbackRepository.findByTaskIdWithDetails(taskId).orElse(null);
+        if (feedback == null) {
+            return null;
+        }
+
+        if (member.getRole().equals(Role.MENTEE) && feedback.getMentee().getId() != member.getId()) {
+            return null;
+        }
+
+        final List<FeedbackImageResponse> feedbackImages = feedbackImageRepository.findByFeedbackId(feedback.getId())
+                .stream()
+                .map(FeedbackImageResponse::of)
+                .collect(Collectors.toList());
+
+        return FeedbackResponse.of(feedback, feedbackImages);
+    }
+
+    @Transactional(readOnly = true)
+    @Override
     public List<FeedbackListResponse> getFeedbackList(final int memberId, final int menteeId, final FeedbackType type) {
         final Member member = findMemberById(memberId);
 
