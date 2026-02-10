@@ -20,4 +20,5 @@ public class PendingFeedbackResponse {
     private TaskType type;
     private Subject subject;
     private String menteeProfileUrl;
+    private int menteeId;
 }

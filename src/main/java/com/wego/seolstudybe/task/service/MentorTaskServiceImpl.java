@@ -177,7 +177,7 @@ public class MentorTaskServiceImpl implements MentorTaskService{
                 .toList();
 
         List<Task> tasks = taskRepository
-                .findTop10ByMenteeIdInAndHasFeedbackFalseAndSubmittedAtIsNotNullOrderBySubmittedAtAsc(menteeIds);
+                .findTop10ByMenteeIdInAndTypeAndHasFeedbackFalseAndSubmittedAtIsNotNullOrderBySubmittedAtAsc(menteeIds, TaskType.ASSIGNMENT);
 
         return tasks.stream()
                 .map(task -> new PendingFeedbackResponse(
@@ -188,7 +188,8 @@ public class MentorTaskServiceImpl implements MentorTaskService{
                         task.getMentee().getName(),
                         task.getType(),
                         task.getSubject(),
-                        task.getMentee().getProfileUrl()
+                        task.getMentee().getProfileUrl(),
+                        task.getMentee().getId()
                 ))
                 .toList();
     }
