@@ -9,8 +9,13 @@ import org.springframework.data.repository.query.Param;
 
 import java.time.LocalDate;
 import java.util.List;
+import java.util.Optional;
 
 public interface FeedbackRepository extends JpaRepository<Feedback, Integer> {
+    @Query("SELECT f FROM Feedback f LEFT JOIN FETCH f.mentor LEFT JOIN FETCH f.mentee LEFT JOIN FETCH f.task " +
+            "WHERE f.task.id = :taskId AND f.type = 'TASK'")
+    Optional<Feedback> findByTaskIdWithDetails(@Param("taskId") int taskId);
+
     @Query("SELECT f FROM Feedback f LEFT JOIN FETCH f.task t LEFT JOIN FETCH t.goal " +
             "WHERE f.mentee.id = :menteeId ORDER BY f.createdAt DESC")
     List<Feedback> findByMenteeIdOrderByCreatedAtDesc(@Param("menteeId") final int menteeId);
