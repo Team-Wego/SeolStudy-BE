@@ -124,6 +124,14 @@ public class MenteeTaskServiceImpl implements MenteeTaskService {
         return TaskResponse.from(task);
     }
 
+    @Override
+    @Transactional
+    public TaskResponse submitTask(int memberId, int taskId) {
+        Task task = findTaskByIdAndMemberId(taskId, memberId);
+        task.submit();
+        return TaskResponse.from(task);
+    }
+
     private Task findTaskByIdAndMemberId(int taskId, int memberId) {
         return taskRepository.findByIdAndMenteeId(taskId, memberId)
                 .orElseThrow(TaskNotFoundException::new);

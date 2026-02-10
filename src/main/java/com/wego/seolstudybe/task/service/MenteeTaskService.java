@@ -20,4 +20,6 @@ public interface MenteeTaskService {
     TaskResponse updateTaskStatus(int memberId, int taskId, TaskStatusUpdateRequest request);
 
     TaskResponse updateTaskComment(int memberId, int taskId, TaskCommentUpdateRequest request);
+
+    TaskResponse submitTask(int memberId, int taskId);
 }

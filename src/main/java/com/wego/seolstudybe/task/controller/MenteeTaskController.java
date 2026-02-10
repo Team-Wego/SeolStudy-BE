@@ -94,6 +94,16 @@ public class MenteeTaskController {
         return ResponseEntity.ok(response);
     }
 
+    @PutMapping("/{taskId}/submit")
+    @Operation(summary = "과제 제출", description = "멘티가 과제를 제출합니다. 제출 시점의 시각이 submitted_at에 기록됩니다.")
+    public ResponseEntity<TaskResponse> submitTask(
+            @PathVariable int menteeId,
+            @PathVariable int taskId
+    ) {
+        TaskResponse response = menteeTaskService.submitTask(menteeId, taskId);
+        return ResponseEntity.ok(response);
+    }
+
     @PostMapping("/{taskId}/images")
     @Operation(summary = "과제 수행 결과 업로드", description = "과제 수행 후 휴대폰 카메라로 촬영하거나 갤러리 이미지 파일을 업로드할 수 있습니다. 과제 날짜 기준 다음날 오전 6시까지만 업로드 가능합니다.")
     public ResponseEntity<List<TaskImageDto>> uploadTaskImages(

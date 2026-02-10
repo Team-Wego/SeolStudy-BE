@@ -23,6 +23,8 @@ public class TaskResponse {
     @JsonProperty("isChecked")
     private final boolean isChecked;
     private final LocalDateTime checkedAt;
+    private final String comment;
+    private final LocalDateTime submittedAt;
     private final Integer sequence;
     private final LocalDateTime createdAt;
 
@@ -36,6 +38,8 @@ public class TaskResponse {
                 .subject(task.getSubject())
                 .isChecked(task.isChecked())
                 .checkedAt(task.getCheckedAt())
+                .comment(task.getComment())
+                .submittedAt(task.getSubmittedAt())
                 .sequence(task.getSequence())
                 .createdAt(task.getCreatedAt())
                 .build();
