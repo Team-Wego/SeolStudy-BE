@@ -10,6 +10,8 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.io.ClassPathResource;
+import org.springframework.core.io.FileSystemResource;
+import org.springframework.core.io.Resource;
 
 import java.io.IOException;
 
@@ -24,7 +26,9 @@ public class FirebaseConfig {
     public void initialize() {
         try {
             if (FirebaseApp.getApps().isEmpty()) {
-                ClassPathResource resource = new ClassPathResource(firebaseConfigPath);
+                Resource resource = firebaseConfigPath.startsWith("classpath:")
+                        ? new ClassPathResource(firebaseConfigPath.substring("classpath:".length()))
+                        : new FileSystemResource(firebaseConfigPath);
 
                 FirebaseOptions options = FirebaseOptions.builder()
                         .setCredentials(GoogleCredentials.fromStream(resource.getInputStream()))

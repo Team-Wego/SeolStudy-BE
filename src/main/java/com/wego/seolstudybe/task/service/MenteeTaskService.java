@@ -1,5 +1,6 @@
 package com.wego.seolstudybe.task.service;
 
+import com.wego.seolstudybe.task.dto.request.TaskCommentUpdateRequest;
 import com.wego.seolstudybe.task.dto.request.TaskCreateRequest;
 import com.wego.seolstudybe.task.dto.request.TaskSequenceUpdateRequest;
 import com.wego.seolstudybe.task.dto.request.TaskStatusUpdateRequest;
@@ -17,4 +18,8 @@ public interface MenteeTaskService {
     void deleteTask(int memberId, int taskId);
 
     TaskResponse updateTaskStatus(int memberId, int taskId, TaskStatusUpdateRequest request);
+
+    TaskResponse updateTaskComment(int memberId, int taskId, TaskCommentUpdateRequest request);
+
+    TaskResponse submitTask(int memberId, int taskId);
 }

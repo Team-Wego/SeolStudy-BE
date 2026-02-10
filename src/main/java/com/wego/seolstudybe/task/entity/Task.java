@@ -91,6 +91,14 @@ public class Task {
         this.checkedAt = isChecked ? LocalDateTime.now() : null;
     }
 
+    public void updateComment(String comment) {
+        this.comment = comment;
+    }
+
+    public void submit() {
+        this.submittedAt = LocalDateTime.now();
+    }
+
     public void update(
             String title,
             String description,

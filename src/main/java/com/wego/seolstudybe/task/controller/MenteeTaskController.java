@@ -1,5 +1,6 @@
 package com.wego.seolstudybe.task.controller;
 
+import com.wego.seolstudybe.task.dto.request.TaskCommentUpdateRequest;
 import com.wego.seolstudybe.task.dto.request.TaskCreateRequest;
 import com.wego.seolstudybe.task.dto.request.TaskSequenceUpdateRequest;
 import com.wego.seolstudybe.task.dto.request.TaskStatusUpdateRequest;
@@ -79,6 +80,27 @@ public class MenteeTaskController {
             @Valid @RequestBody TaskStatusUpdateRequest request
     ) {
         TaskResponse response = menteeTaskService.updateTaskStatus(menteeId, taskId, request);
+        return ResponseEntity.ok(response);
+    }
+
+    @PutMapping("/{taskId}/comment")
+    @Operation(summary = "과제 코멘트 등록/수정", description = "멘티가 과제에 코멘트를 등록하거나 수정합니다.")
+    public ResponseEntity<TaskResponse> updateTaskComment(
+            @PathVariable int menteeId,
+            @PathVariable int taskId,
+            @Valid @RequestBody TaskCommentUpdateRequest request
+    ) {
+        TaskResponse response = menteeTaskService.updateTaskComment(menteeId, taskId, request);
+        return ResponseEntity.ok(response);
+    }
+
+    @PutMapping("/{taskId}/submit")
+    @Operation(summary = "과제 제출", description = "멘티가 과제를 제출합니다. 제출 시점의 시각이 submitted_at에 기록됩니다.")
+    public ResponseEntity<TaskResponse> submitTask(
+            @PathVariable int menteeId,
+            @PathVariable int taskId
+    ) {
+        TaskResponse response = menteeTaskService.submitTask(menteeId, taskId);
         return ResponseEntity.ok(response);
     }
 

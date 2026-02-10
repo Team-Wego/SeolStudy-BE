@@ -1,0 +1,50 @@
+spring:
+  profiles:
+    active: local
+
+  servlet:
+    multipart:
+      max-file-size: 50MB
+      max-request-size: 50MB
+
+  datasource:
+    driver-class-name: com.mysql.cj.jdbc.Driver
+
+  jpa:
+    hibernate:
+      ddl-auto: validate
+    properties:
+      hibernate:
+        show_sql: true
+        format_sql: true
+        use_sql_comments: true
+
+server:
+  port: 8080
+
+cloud:
+  aws:
+    s3:
+      bucket: wego-seol-study
+    region:
+      static: ap-southeast-2
+    stack:
+      auto: false
+
+mybatis:
+  configuration:
+    map-underscore-to-camel-case: true
+    mapper-locations: classpath:mapper/*.xml
+
+logging:
+  level:
+    org.hibernate.SQL: debug
+    org.hibernate.type.descriptor.sql: trace
+
+firebase:
+  config-path: classpath:seol-study-firebase-adminsdk-fbsvc-c75e7d0e06.json
+  web:
+    auth-domain: seol-study.firebaseapp.com
+    project-id: seol-study
+    storage-bucket: seol-study.firebasestorage.app
+    messaging-sender-id: "591614554046"
