@@ -52,9 +52,16 @@ public class FeedbackServiceImpl implements FeedbackService {
 
         final Member mentee = findMemberById(request.getMenteeId());
 
-        if (feedbackRepository.existsByMenteeIdAndTargetDateAndType(request.getMenteeId(), request.getTargetDate(),
-                request.getType())) {
-            throw new FeedbackAlreadyExistException();
+        if (FeedbackType.TASK.equals(request.getType())) {
+            if (feedbackRepository.existsByMenteeIdAndTargetDateAndTypeAndTaskId(
+                    request.getMenteeId(), request.getTargetDate(), request.getType(), request.getTaskId())) {
+                throw new FeedbackAlreadyExistException();
+            }
+        } else {
+            if (feedbackRepository.existsByMenteeIdAndTargetDateAndType(
+                    request.getMenteeId(), request.getTargetDate(), request.getType())) {
+                throw new FeedbackAlreadyExistException();
+            }
         }
 
         final Task task = findTaskById(request.getTaskId());
@@ -128,7 +135,11 @@ public class FeedbackServiceImpl implements FeedbackService {
                 : feedbackRepository.findByMenteeIdOrderByCreatedAtDesc(menteeId);
 
         return feedbacks.stream()
-                .map(FeedbackListResponse::of)
+                .map(f -> {
+                    final List<FeedbackImageResponse> images = feedbackImageRepository.findByFeedbackId(f.getId())
+                            .stream().map(FeedbackImageResponse::of).collect(Collectors.toList());
+                    return FeedbackListResponse.of(f, images);
+                })
                 .collect(Collectors.toList());
     }
 
