@@ -12,8 +12,10 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
 
@@ -29,13 +31,14 @@ public class MentorTaskController {
             summary = "과제 등록",
             description = "멘토가 담당 멘티에게 과제를 등록합니다."
     )
-    @PostMapping("/mentees/{menteeId}/tasks")
+    @PostMapping(value = "/mentees/{menteeId}/tasks", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     public ResponseEntity<CreateTaskResponse> createTask(
             @CookieValue(value = "memberId", defaultValue = "1") int memberId,
             @PathVariable("menteeId") int menteeId,
-            @RequestBody @Valid CreateTaskRequest request
+            @Valid @RequestPart("request") CreateTaskRequest request,
+            @RequestPart(name = "files", required = false) List<MultipartFile> files
     ) {
-        CreateTaskResponse response = mentorTaskService.createTask(memberId, menteeId, request);
+        CreateTaskResponse response = mentorTaskService.createTask(memberId, menteeId, request, files);
         return ResponseEntity.status(HttpStatus.CREATED).body(response);
     }
 

@@ -23,29 +23,37 @@ import com.wego.seolstudybe.task.entity.enums.TaskType;
 import com.wego.seolstudybe.task.exception.TaskNotFoundException;
 import com.wego.seolstudybe.task.repository.TaskRepository;
 import com.wego.seolstudybe.task.repository.TaskWorksheetRepository;
+import com.wego.seolstudybe.common.service.S3Service;
+import com.wego.seolstudybe.mentoring.entity.enums.Subject;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.time.LocalDate;
+import java.util.ArrayList;
 import java.util.List;
 
 @Service
 @RequiredArgsConstructor
 public class MentorTaskServiceImpl implements MentorTaskService{
 
+    private static final String WORKSHEET_FOLDER = "worksheet";
+
     private final MemberRepository memberRepository;
     private final TaskRepository taskRepository;
     private final GoalRepository goalRepository;
     private final WorksheetFileRepository worksheetFileRepository;
     private final TaskWorksheetRepository taskWorksheetRepository;
+    private final S3Service s3Service;
 
     @Override
     @Transactional
     public CreateTaskResponse createTask(
             int mentorId,
             int menteeId,
-            CreateTaskRequest request
+            CreateTaskRequest request,
+            List<MultipartFile> files
     ) {
 
         Member mentee = getVerifiedMentee(mentorId, menteeId);
@@ -67,7 +75,23 @@ public class MentorTaskServiceImpl implements MentorTaskService{
 
         taskRepository.save(task);
 
+        // 기존 worksheetFileIds 처리 (소유권 검증)
         replaceTaskWorksheets(task, mentee, request.getWorksheetFileIds());
+
+        // 목표의 학습지 자동 연결 (이미 검증된 관계이므로 직접 연결)
+        if (goal != null && goal.getWorksheetFile() != null) {
+            taskWorksheetRepository.save(new TaskWorksheet(task, goal.getWorksheetFile()));
+        }
+
+        // 업로드된 파일 → WorksheetFile 생성 후 직접 연결
+        if (files != null && !files.isEmpty()) {
+            for (MultipartFile file : files) {
+                WorksheetFile wf = saveWorksheetFile(file, request.getSubject(), mentee);
+                if (wf != null) {
+                    taskWorksheetRepository.save(new TaskWorksheet(task, wf));
+                }
+            }
+        }
 
         return new CreateTaskResponse(
                 task.getId()
@@ -192,6 +216,21 @@ public class MentorTaskServiceImpl implements MentorTaskService{
         }
         return goalRepository.findById(goalId)
                 .orElseThrow(GoalNotFoundException::new);
+    }
+
+    /**
+     * 파일을 S3에 업로드하고 WorksheetFile 엔티티를 생성
+     */
+    private WorksheetFile saveWorksheetFile(final MultipartFile file, final Subject subject, final Member mentee) {
+        if (file == null || file.isEmpty()) {
+            return null;
+        }
+        final String s3Url = s3Service.uploadFile(file, WORKSHEET_FOLDER);
+        final WorksheetFile worksheetFile = new WorksheetFile(
+                mentee, file.getOriginalFilename(), s3Url,
+                (float) file.getSize(), file.getContentType(), subject
+        );
+        return worksheetFileRepository.save(worksheetFile);
     }
 
     /**

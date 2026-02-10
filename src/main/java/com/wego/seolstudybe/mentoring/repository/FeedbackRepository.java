@@ -31,4 +31,6 @@ public interface FeedbackRepository extends JpaRepository<Feedback, Integer> {
     Feedback findByTargetDateAndMenteeIdAndType(final LocalDate targetDate, final int menteeId, final FeedbackType type);
 
     boolean existsByMenteeIdAndTargetDateAndType(final int menteeId, final LocalDate targetDate, final FeedbackType type);
+
+    boolean existsByMenteeIdAndTargetDateAndTypeAndTaskId(final int menteeId, final LocalDate targetDate, final FeedbackType type, final int taskId);
 }
